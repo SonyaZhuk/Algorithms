@@ -2,6 +2,9 @@ package algo.sorting;
 
 import java.util.Arrays;
 
+
+//bucket sorting O(kN) time for worst case, for numbers
+//k - количество проходов алгоритма
 public class RadixSort {
 
     // Using counting sort to sort the elements in the basis of significant places

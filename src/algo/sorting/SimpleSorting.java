@@ -9,21 +9,22 @@ public class SimpleSorting {
         try {
             FileReader reader = new FileReader("C:\\test.txt");
             int i;
-            while((i = reader.read())!=-1)
-                System.out.print((char)i);
+            while ((i = reader.read()) != -1)
+                System.out.print((char) i);
             reader.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        int[] arr = new int[] {3,2,8,5,6,3,9,1};
+        int[] arr = new int[]{3, 2, 8, 5, 6, 3, 9, 1};
         //System.out.println(Arrays.toString(mergeSort(arr)));
         //selectionSort(arr);
         //quickSort(arr, 0, arr.length -1);
         //System.out.println(Arrays.toString(arr));
     }
 
+    //O(N^2) в худшем и в среднем, O(1) memory
     private static int[] bubbleSort(int[] arr) {
-        for(int i = 0; i < arr.length; i++) {
+        for (int i = 0; i < arr.length; i++) {
             for (int j = 1; j < arr.length - i; j++) {
                 if (arr[j - 1] > arr[j]) {
                     int temp = arr[j - 1];
@@ -36,10 +37,10 @@ public class SimpleSorting {
     }
 
     //N + N-1 + N-2 +... + 2+1 ~ N^2/2(сравнений) + N(перестановок) --> O(N^2)
-    //O(N^2)  в лучшем, среднем и худшем случае, не устойчива, эффективна на маленьких массивах <= 10
+    //O(N^2)  в лучшем, среднем и худшем случае, не устойчива, эффективна на маленьких массивах <= 10, O(1) memory
     private static void selectionSort(int[] arr) {
         int min, temp;
-        for(int i = 0; i< arr.length -1; i++) {
+        for (int i = 0; i < arr.length - 1; i++) {
             min = i;
             for (int j = i + 1; j < arr.length; j++) {
                 if (arr[j] < arr[min]) min = j;
@@ -55,10 +56,10 @@ public class SimpleSorting {
     //O(N^2) - в среднем и худшем случае, O(N) - в лучшем случае
     //устойчива
     private static void insertSort(int[] arr) {
-        for(int i = 0; i< arr.length; i++) {
+        for (int i = 0; i < arr.length; i++) {
             int c = arr[i];
             int p = i - 1;
-            while(p >= 0 && arr[p] > c) {
+            while (p >= 0 && arr[p] > c) {
                 arr[p + 1] = arr[p];
                 arr[p] = c;
                 p--;
@@ -83,23 +84,25 @@ public class SimpleSorting {
 //        }
 //    }
 
-    //гарантированное время сортировки любого массива из N за время O(N*logN)
+    // гарантированное время сортировки любого массива из N за время O(N*logN)
+    // O(N*logN) в худшем и среднем
     // недостаток - требование доп памяти объема ~N
     // устойчива, асимптотически оптимальный алгоритм на основе операций сравнения
     private static int[] mergeSort(int[] arr) {
-        if(arr.length < 2) return arr;
-        int m = arr.length/2;
+        if (arr.length < 2) return arr;
+        int m = arr.length / 2;
         int[] arr1 = Arrays.copyOfRange(arr, 0, m);
         int[] arr2 = Arrays.copyOfRange(arr, m, arr.length);
         return merge(mergeSort(arr1), mergeSort(arr2));
     }
+
     private static int[] merge(int[] arr1, int arr2[]) {
         int n = arr1.length + arr2.length;
-        int[]arr = new int[n];
+        int[] arr = new int[n];
         int i1 = 0;
         int i2 = 0;
-        for(int i = 0; i < n; i++) {
-            if(i1 == arr1.length) {
+        for (int i = 0; i < n; i++) {
+            if (i1 == arr1.length) {
                 arr[i] = arr2[i2++];
             } else if (i2 == arr2.length) {
                 arr[i] = arr1[i1++];
@@ -116,7 +119,7 @@ public class SimpleSorting {
 
 
     // O(N*logN) в среднем (сравений), в худшем случае - O(N^2)
-    // использует только небольшой вспомогательный стек
+    // использует только небольшой вспомогательный стек - O(N*logN)
     // не устойчива
     // для маленьких массивов работает медленнее, чем сортировка вставками
     public static void quickSort(int[] array, int low, int high) {
@@ -155,5 +158,37 @@ public class SimpleSorting {
 
         if (high > i)
             quickSort(array, i, high);
+    }
+
+    void quickSortt(int[] arr, int left, int right) {
+        int index = partition(arr, left, right);
+        if (left < index - 1) { //Сортировка левой половины
+            quickSortt(arr, left, index - 1);
+        }
+        if (index < right) { // Сортировка правой половины
+            quickSortt(arr, index, right);
+        }
+    }
+
+    int partition(int[] arr, int left, int right) {
+        int pivot = arr[(left + right) / 2]; // Выбор центральной точки
+        while (left <= right) {
+            // Найти слева элемент, который должен быть справа
+            while (arr[left] < pivot) left++;
+
+            // Найти справа элемент, который должен быть слева
+            while (arr[right] > pivot) right--;
+
+            // Поменять элементы местами и сместить индексы left и right
+            if (left <= right) {
+                // Элементы меняются местами
+                int temp = arr[left];
+                arr[left] = arr[right];
+                arr[right] = temp;
+                left++;
+                right--;
+            }
+        }
+        return left;
     }
 }

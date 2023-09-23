@@ -1,13 +1,18 @@
 package structures.trees;
 
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
 
+/**
+ * Java program to implement a binary tree.
+ * <p>
+ * based on  //https://www.baeldung.com/java-binary-tree
+ */
 public class BinaryTree<T extends Comparable<T>> {
-
     private Node root;
 
-     private class Node {
+    private class Node {
         T value;
         Node left;
         Node right;
@@ -29,9 +34,9 @@ public class BinaryTree<T extends Comparable<T>> {
         }
 
         int cmp = value.compareTo(current.value);
-        if      (cmp < 0) current.left = addRecursive(current.left, value);
+        if (cmp < 0) current.left = addRecursive(current.left, value);
         else if (cmp > 0) current.right = addRecursive(current.right, value);
-        else              return current;
+        else return current;
 
 //        if (value < current.value) {
 //            current.left = addRecursive(current.left, value);
@@ -50,7 +55,7 @@ public class BinaryTree<T extends Comparable<T>> {
     }
 
     //recursive delete function
-    private Node deleteRecursive(Node current, T value)  {
+    private Node deleteRecursive(Node current, T value) {
         //tree is empty
         if (current == null) return null;
 
@@ -64,7 +69,7 @@ public class BinaryTree<T extends Comparable<T>> {
             return current;
         } else {
             if (current.right == null) return current.left;
-            if (current.left  == null) return current.right;
+            if (current.left == null) return current.right;
             Node t = current;
             current = min(t.right);
             current.right = deleteMin(t.right);
@@ -81,10 +86,10 @@ public class BinaryTree<T extends Comparable<T>> {
 
     private Node min(Node current) {
         if (current.left == null) return current;
-        else                return min(current.left);
+        else return min(current.left);
     }
 
-    public T minValue(Node root)  {
+    public T minValue(Node root) {
         return root.left == null ? root.value : minValue(root.left);
     }
 
@@ -106,7 +111,7 @@ public class BinaryTree<T extends Comparable<T>> {
                 : containsNodeRecursive(current.right, value);
     }
 
-    //обход дерева
+    // симметричный (in-order) обход
     public void traverseInOrder(Node node) {
         if (node != null) {
             traverseInOrder(node.left);
@@ -141,8 +146,10 @@ public class BinaryTree<T extends Comparable<T>> {
         }
     }
 
-    //https://www.baeldung.com/java-binary-tree
-    public static void main(String[] args){
+    /**
+     * Unit tests the <tt>lists.Queue</tt> data type.
+     */
+    public static void main(String[] args) {
 
         BinaryTree<Integer> bt = new BinaryTree();
         bt.add(6);
@@ -154,13 +161,21 @@ public class BinaryTree<T extends Comparable<T>> {
         bt.add(9);
 
         System.out.println();
-       System.out.println(bt.minValue(bt.root));
-       //System.out.println(bt.containsNode(2));
-       bt.traverseInOrder(bt.root);
-       System.out.println();
-      // bt.delete(6);
-      //  bt.traverseInOrder(bt.root);
-       // System.out.println();
-       //bt.traverseLevelOrder();
+        System.out.println(bt.minValue(bt.root));
+        //System.out.println(bt.containsNode(2));
+        bt.traverseInOrder(bt.root);
+        System.out.println();
+        // bt.delete(6);
+        //  bt.traverseInOrder(bt.root);
+        // System.out.println();
+        //bt.traverseLevelOrder();
+
+        PriorityQueue<Integer> queue = new PriorityQueue();
+        queue.add(5);
+        queue.add(7);
+        queue.add(1);
+        queue.add(3);
+        for (Integer s : queue)
+            System.out.println(s);
     }
 }

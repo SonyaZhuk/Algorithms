@@ -1,8 +1,6 @@
 package structures.trees;
 
 public class RedBlackTree<T extends Comparable<T>> {
-
-
     private static final boolean RED   = true;
     private static final boolean BLACK = false;
 
@@ -31,7 +29,6 @@ public class RedBlackTree<T extends Comparable<T>> {
         if (x == null) return false;
         return (x.color == RED);
     }
-
 
     // number of node in subtree rooted at x; 0 if x is null
     private int size(Node x) {
@@ -109,7 +106,6 @@ public class RedBlackTree<T extends Comparable<T>> {
 
         return current;
     }
-
 
     /*****************************************************************************
      *  Test client
