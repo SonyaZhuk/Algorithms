@@ -200,10 +200,48 @@ public class Sorting {
     }
 
     /**
+     * Find duplicates in arr [1, N], N < 32000, 4Kb memory.
+     * <p>
+     * See Lakman p. 427
+     */
+    public void findDuplicates(int[] arr) {
+        final BitSet bitSet = new BitSet();
+        for (int i = 0; i < arr.length; i++) {
+            int num = arr[i];
+            int num0 = num - 1;
+            if (bitSet.get(num0)) {
+                System.out.println(num);
+            } else {
+                bitSet.set(num0);
+            }
+        }
+    }
+
+    /**
+     * Find an element in sorted matrix M*N.
+     * <p>
+     * See Lakman p. 428
+     */
+    public boolean findElement(int[][] matrix, int elem) {
+        int row = 0;
+        int col = matrix[0].length - 1;
+        while (row < matrix.length && col >= 0) {
+            if (matrix[row][col] == elem) return true;
+
+            if (matrix[row][col] > elem) {
+                col--;
+            } else {
+                row++;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Unit tests.
      */
     public static void main(String[] args) {
-        int[] arr = new int[]{3, 2, 8, 5, 6, 3, 9, 1};
+        int[] arr = new int[]{3, 2, 8, 5, 6, 3, 9, 1, 5};
         int[] A = new int[]{1, 2, 3, 5, 6, 8, 9, 0, 0, 0};
         int[] B = new int[]{2, 3, 8};
         final Sorting sort = new Sorting();
@@ -212,5 +250,6 @@ public class Sorting {
         String[] arrS = new String[]{"acre", "", "race", "lo", ""};
         System.out.println(sort.search(arrS, "lo"));
         System.out.println(Arrays.toString(sort.sortAnagram2(arrS)));
+        sort.findDuplicates(arr);
     }
 }
