@@ -238,8 +238,103 @@ public class Sorting {
     }
 
     /**
-     * Unit tests.
+     * Get rank for number thread, O(logN) in balanced case.
+     * <p>
+     * See Lakman p. 434
      */
+    RankNode root = null;
+
+    public void track(int number) {
+        if (root == null) {
+            root = new RankNode(number);
+        } else {
+            root.insert(number);
+        }
+    }
+
+    public int getRankOfNumber(int number) {
+        return root.getRank(number);
+    }
+
+    public class RankNode {
+        private int left_size = 0;
+        private RankNode left, right;
+        private int data = 0;
+
+        public RankNode(int d) {
+            data = d;
+        }
+
+        public void insert(int d) {
+            if (d <= data) {
+                if (left != null) left.insert(d);
+                else left = new RankNode(d);
+                left_size++;
+            } else {
+                if (right != null) right.insert(d);
+                else right = new RankNode(d);
+
+            }
+        }
+
+        public int getRank(int d) {
+            if (d == data) {
+                return left_size;
+            } else if (d < data) {
+                if (left == null) return -1;
+                else return left.getRank(d);
+            } else {
+                int right_rank = right == null ? -1 : right.getRank(d);
+                if (right_rank == -1) return -1;
+                else return left_size + 1 + right_rank;
+            }
+        }
+    }
+
+    /**
+     * Get order by peaks, O(N*logN).
+     * <p>
+     * See Lakman p. 435
+     */
+    public void sortValleyPeak(int[] array) {
+        Arrays.sort(array);
+        for (int i = 1; i < array.length - 1; i += 2) {
+            int temp = array[i - 1];
+            array[i - 1] = array[i];
+            array[i] = temp;
+        }
+    }
+
+    /**
+     * Get order by peaks, O(N).
+     * <p>
+     * See Lakman p. 435
+     */
+    public void sortValleyPeak1(int[] array) {
+        for (int i = 1; i < array.length - 1; i += 2) {
+            int maxIndex = maxIndex(array, i - 1, i, i + 1);
+            if (i != maxIndex) {
+                int temp = array[maxIndex];
+                array[maxIndex] = array[i];
+                array[i] = temp;
+            }
+        }
+    }
+
+    private int maxIndex(int[] array, int a, int b, int c) {
+        int aVal = array[a];
+        int bVal = array[b];
+        int cVal = array[c];
+
+        int max = Math.max(aVal, Math.max(bVal, cVal));
+         if (aVal == max) return a;
+         else if (bVal == max) return b;
+         else return c;
+    }
+
+        /**
+         * Unit tests.
+         */
     public static void main(String[] args) {
         int[] arr = new int[]{3, 2, 8, 5, 6, 3, 9, 1, 5};
         int[] A = new int[]{1, 2, 3, 5, 6, 8, 9, 0, 0, 0};
@@ -251,5 +346,8 @@ public class Sorting {
         System.out.println(sort.search(arrS, "lo"));
         System.out.println(Arrays.toString(sort.sortAnagram2(arrS)));
         sort.findDuplicates(arr);
+        int[] arr1 = new int[]{0, 4, 1, 7, 8, 9};
+        sort.sortValleyPeak(arr1);
+        System.out.println(Arrays.toString(arr1));
     }
 }
