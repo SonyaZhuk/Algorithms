@@ -2,6 +2,7 @@ package algo.dp.lakman;
 
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Stack;
 
 /**
@@ -219,6 +220,88 @@ public class DynamicProg {
     }
 
     /**
+     * String permutation.
+     * <p>
+     * See Lakman p. 370
+     */
+    public ArrayList<String> getPerms(String str) {
+        if (str == null) return null;
+
+        ArrayList<String> perm = new ArrayList<>();
+        if (str.length() == 0) {
+            perm.add("");
+            return perm;
+        }
+
+        char firstChar = str.charAt(0);
+        String sub = str.substring(1);
+        ArrayList<String> words = getPerms(sub);
+
+        for (String word: words) {
+            for (int i = 0; i <= word.length(); i++) {
+                String p = insertCharAt(word, firstChar, i);
+                perm.add(p);
+            }
+        }
+        return perm;
+    }
+    private String insertCharAt(String s, char ch, int i) {
+        final String start = s.substring(0, i);
+        final String end = s.substring(i);
+        return start + ch + end;
+    }
+
+    /**
+     * String permutation, O(n!).
+     * <p>
+     * See Lakman p. 370
+     */
+    public ArrayList<String> getPerms1(String str) {
+        if (str == null) return null;
+
+        ArrayList<String> perm = new ArrayList<>();
+        if (str.length() == 0) {
+            perm.add("");
+            return perm;
+        }
+
+        int len = str.length();
+
+        for (int i = 0; i < len; i++) {
+            final String before = str.substring(0, i);
+            final String after = str.substring(i + 1, len);
+            ArrayList<String> part = getPerms1(before + after);
+
+            for(String p: part) {
+                perm.add(str.charAt(i) + p);
+            }
+        }
+        return perm;
+    }
+
+    /**
+     * String permutation, O(n!).
+     * <p>
+     * See Lakman p. 372
+     */
+    public ArrayList<String> getPerms2(String str) {
+        ArrayList<String> res = new ArrayList<>();
+        getPerms("", str, res);
+        return res;
+    }
+    private void getPerms(String prefix, String str, ArrayList<String> res) {
+        if (str.length() == 0) res.add(prefix);
+
+        int len = str.length();
+        for (int i = 0; i < len; i++) {
+            final String before = str.substring(0, i);
+            final String after = str.substring(i + 1);
+            char c = str.charAt(i);
+            getPerms(prefix + c, before + after, res);
+        }
+    }
+
+    /**
      * Unit tests.
      */
     public static void main(String[] args) {
@@ -233,5 +316,6 @@ public class DynamicProg {
         System.out.println((b < 0) ? -c : c);
         System.out.println(dynamicProg.multiplyDigits1(5, 6));
         dynamicProg.towerTest();
+        dynamicProg.getPerms("abc");
     }
 }
