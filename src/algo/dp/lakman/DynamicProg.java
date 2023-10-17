@@ -2,7 +2,7 @@ package algo.dp.lakman;
 
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Stack;
 
 /**
  * Dynamic Programming.
@@ -175,6 +175,50 @@ public class DynamicProg {
     }
 
     /**
+     * Hanoi tower.
+     * <p>
+     * See Lakman p. 369
+     */
+    public void towerTest() {
+        int n = 3;
+        Tower[] towers = new Tower[n];
+        for (int i = 0; i < n; i++) {
+            towers[i] = new Tower(i);
+        }
+
+        for (int i = n - 1; i >= 0; i--) {
+            towers[0].add(i);
+        }
+        towers[0].moveDisks(n, towers[2], towers[1]);
+    }
+
+    private static class Tower {
+        private Stack<Integer> disks;
+        private int index;
+
+        public Tower(int index) {
+            this.index = index;
+            disks = new Stack<>();
+        }
+        public void add(int disk) {
+            if (!this.disks.isEmpty() && disks.peek() <= disk)
+                throw new UnsupportedOperationException();
+            this.disks.push(disk);
+        }
+        public void moveTop(Tower tower) {
+            int top = this.disks.pop();
+            tower.add(top);
+        }
+        public void moveDisks(int n, Tower destination, Tower buffer) {
+            if (n > 0) {
+                moveDisks(n - 1, buffer, destination);
+                moveTop(destination);
+                buffer.moveDisks(n - 1, destination, this);
+            }
+        }
+    }
+
+    /**
      * Unit tests.
      */
     public static void main(String[] args) {
@@ -188,5 +232,6 @@ public class DynamicProg {
         int c = dynamicProg.multiplyDigits(2, Math.abs(b));
         System.out.println((b < 0) ? -c : c);
         System.out.println(dynamicProg.multiplyDigits1(5, 6));
+        dynamicProg.towerTest();
     }
 }
