@@ -346,6 +346,36 @@ public class DynamicProg {
     }
 
     /**
+     * Generate a brackets' permutation.
+     * <p>
+     * See Lakman p. 374
+     */
+    public Set<String> getParens(int count) {
+        final Set<String> res = new HashSet<>();
+        if (count == 0) {
+            res.add("");
+        } else {
+            final Set<String> prev = getParens(count - 1);
+            for (String p : prev) {
+                for (int i = 0; i < p.length(); i++) {
+                    if (p.charAt(i) == '(') {
+                        final String s = insertInside(p, i);
+                        res.add(s);
+                    }
+                }
+                res.add("()" + p);
+            }
+        }
+        return res;
+    }
+
+    private String insertInside(String str, int leftIndex) {
+        final String left = str.substring(0, leftIndex + 1);
+        final String right = str.substring(leftIndex + 1);
+        return left + "()" + right;
+    }
+
+    /**
      * Unit tests.
      */
     public static void main(String[] args) {
@@ -361,5 +391,6 @@ public class DynamicProg {
         System.out.println(dynamicProg.multiplyDigits1(5, 6));
         dynamicProg.towerTest();
         dynamicProg.getPermsWithDup("aabc");
+        dynamicProg.getParens(3);
     }
 }
