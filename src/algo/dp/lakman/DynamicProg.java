@@ -1,9 +1,7 @@
 package algo.dp.lakman;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Dynamic Programming.
@@ -201,15 +199,18 @@ public class DynamicProg {
             this.index = index;
             disks = new Stack<>();
         }
+
         public void add(int disk) {
             if (!this.disks.isEmpty() && disks.peek() <= disk)
                 throw new UnsupportedOperationException();
             this.disks.push(disk);
         }
+
         public void moveTop(Tower tower) {
             int top = this.disks.pop();
             tower.add(top);
         }
+
         public void moveDisks(int n, Tower destination, Tower buffer) {
             if (n > 0) {
                 moveDisks(n - 1, buffer, destination);
@@ -237,7 +238,7 @@ public class DynamicProg {
         String sub = str.substring(1);
         ArrayList<String> words = getPerms(sub);
 
-        for (String word: words) {
+        for (String word : words) {
             for (int i = 0; i <= word.length(); i++) {
                 String p = insertCharAt(word, firstChar, i);
                 perm.add(p);
@@ -245,6 +246,7 @@ public class DynamicProg {
         }
         return perm;
     }
+
     private String insertCharAt(String s, char ch, int i) {
         final String start = s.substring(0, i);
         final String end = s.substring(i);
@@ -272,7 +274,7 @@ public class DynamicProg {
             final String after = str.substring(i + 1, len);
             ArrayList<String> part = getPerms1(before + after);
 
-            for(String p: part) {
+            for (String p : part) {
                 perm.add(str.charAt(i) + p);
             }
         }
@@ -289,6 +291,7 @@ public class DynamicProg {
         getPerms("", str, res);
         return res;
     }
+
     private void getPerms(String prefix, String str, ArrayList<String> res) {
         if (str.length() == 0) res.add(prefix);
 
@@ -298,6 +301,47 @@ public class DynamicProg {
             final String after = str.substring(i + 1);
             char c = str.charAt(i);
             getPerms(prefix + c, before + after, res);
+        }
+    }
+
+    /**
+     * String permutation with duplications, O(n!).
+     * <p>
+     * See Lakman p. 374
+     */
+    public ArrayList<String> getPermsWithDup(String str) {
+        final ArrayList<String> res = new ArrayList<>();
+        final Map<Character, Integer> map = buildMap(str);
+        getPerms(map, "", str.length(), res);
+        return res;
+    }
+
+    private Map<Character, Integer> buildMap(String str) {
+        final Map<Character, Integer> map = new HashMap<>();
+        final char[] arr = str.toCharArray();
+        for (char ch : arr) {
+            if (!map.containsKey(ch)) {
+                map.put(ch, 0);
+            }
+            map.put(ch, map.get(ch) + 1);
+        }
+        return map;
+    }
+
+    private void getPerms(Map<Character, Integer> map, String prefix,
+                          int index, ArrayList<String> res) {
+        if (index == 0) {
+            res.add(prefix);
+            return;
+        }
+
+        for (char ch : map.keySet()) {
+            int c = map.get(ch);
+            if (c > 0) {
+                map.put(ch, c - 1);
+                getPerms(map, prefix + ch, index - 1, res);
+                map.put(ch, c);
+            }
         }
     }
 
@@ -316,6 +360,6 @@ public class DynamicProg {
         System.out.println((b < 0) ? -c : c);
         System.out.println(dynamicProg.multiplyDigits1(5, 6));
         dynamicProg.towerTest();
-        dynamicProg.getPerms("abc");
+        dynamicProg.getPermsWithDup("aabc");
     }
 }
