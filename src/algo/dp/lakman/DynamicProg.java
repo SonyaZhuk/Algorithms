@@ -376,6 +376,62 @@ public class DynamicProg {
     }
 
     /**
+     * Fill color (painting).
+     * <p>
+     * See Lakman p. 376
+     */
+    public boolean paintFill(Color[][] screen, int row, int column, Color point) {
+        if (screen[row][column] == point) return false;
+        return paintFill(screen, row, column, screen[row][column], point);
+
+    }
+
+    private boolean paintFill(Color[][] screen, int row, int column, Color rc, Color point) {
+        if (row < 0 || row >= screen.length || column < 0 || column >= screen[0].length)
+            return false;
+
+        if (screen[row][column] == rc) {
+            screen[row][column] = point;
+            paintFill(screen, row - 1, column, rc, point);
+            paintFill(screen, row + 1, column, rc, point);
+            paintFill(screen, row, column + 1, rc, point);
+            paintFill(screen, row, column - 1, rc, point);
+        }
+        return true;
+    }
+    enum Color {
+        BLACK,
+        WHITE,
+        GREEN,
+        RED
+    }
+
+
+    /**
+     * Counting cent presentation.
+     * <p>
+     * See Lakman p. 377
+     */
+    public int makeChange(int n) {
+        int[] arr = {25, 10, 5, 1};
+        int[][] map = new int[n + 1][arr.length]; // with cashing
+        return makeChange(n, arr, 0, map);
+    }
+    private int makeChange(int n, int[] arr, int index, int[][] map) {
+        if (map[n][index] > 0) return map[n][index];
+        if (index >= arr.length - 1) return 1;
+
+        int currIndex = arr[index];
+        int ways = 0;
+        for (int i = 0; i * arr.length <= n; i++) {
+            int remaining = n - i * currIndex;
+            ways += makeChange(remaining, arr, index + 1, map);
+        }
+        map[n][index] = ways;
+        return ways;
+    }
+
+    /**
      * Unit tests.
      */
     public static void main(String[] args) {
@@ -392,5 +448,6 @@ public class DynamicProg {
         dynamicProg.towerTest();
         dynamicProg.getPermsWithDup("aabc");
         dynamicProg.getParens(3);
+        System.out.println(dynamicProg.makeChange(100));
     }
 }
