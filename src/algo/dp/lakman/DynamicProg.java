@@ -399,13 +399,13 @@ public class DynamicProg {
         }
         return true;
     }
+
     enum Color {
         BLACK,
         WHITE,
         GREEN,
         RED
     }
-
 
     /**
      * Counting cent presentation.
@@ -417,18 +417,56 @@ public class DynamicProg {
         int[][] map = new int[n + 1][arr.length]; // with cashing
         return makeChange(n, arr, 0, map);
     }
+
     private int makeChange(int n, int[] arr, int index, int[][] map) {
         if (map[n][index] > 0) return map[n][index];
         if (index >= arr.length - 1) return 1;
 
         int currIndex = arr[index];
         int ways = 0;
-        for (int i = 0; i * arr.length <= n; i++) {
+        for (int i = 0; i * currIndex <= n; i++) {
             int remaining = n - i * currIndex;
             ways += makeChange(remaining, arr, index + 1, map);
         }
         map[n][index] = ways;
         return ways;
+    }
+
+    /**
+     * Counting resulting when permutations are equals result with memo.
+     * <p>
+     * See Lakman p. 384
+     */
+    public int countEval(String s, boolean res, HashMap<String, Integer> memo) {
+        if (s.length() == 0) return 0;
+        if (s.length() == 1) return s.equals("1") == res ? 1 : 0;
+        if (memo.containsKey(s + res)) return memo.get(s + res);
+
+        int way = 0;
+        for (int i = 1; i < s.length(); i += 2) {
+            char ch = s.charAt(i);
+            String left = s.substring(0, i);
+            String right = s.substring(i + 1);
+            int leftTrue = countEval(left, true, memo);
+            int rightTrue = countEval(right, true, memo);
+            int leftFalse = countEval(left, false, memo);
+            int rightFalse = countEval(right, false, memo);
+            int total = (leftTrue + leftFalse) * (rightTrue + rightFalse);
+
+            int totalTrue = 0;
+            if (ch == '^') {
+                totalTrue = leftTrue * rightFalse + leftFalse * rightTrue;
+            } else if (ch == '&') {
+                totalTrue = leftTrue + rightTrue;
+            } else if (ch == '|') {
+                totalTrue = leftTrue * rightTrue + leftTrue * rightFalse + leftFalse * rightTrue;
+            }
+
+            int subWay = res ? totalTrue : total - totalTrue;
+            way += subWay;
+        }
+        memo.put(res + s, way);
+        return way;
     }
 
     /**
@@ -440,7 +478,6 @@ public class DynamicProg {
         ArrayList<String> set = new ArrayList<>();
         set.add("a1");
         set.add("a2");
-        //dynamicProg.getAllSubset(set);
         int b = -3;
         int c = dynamicProg.multiplyDigits(2, Math.abs(b));
         System.out.println((b < 0) ? -c : c);
@@ -449,5 +486,6 @@ public class DynamicProg {
         dynamicProg.getPermsWithDup("aabc");
         dynamicProg.getParens(3);
         System.out.println(dynamicProg.makeChange(100));
+        System.out.println(dynamicProg.countEval("0^0&0^1|1", true, new HashMap<>()));
     }
 }
