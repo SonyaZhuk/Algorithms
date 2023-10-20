@@ -470,6 +470,40 @@ public class DynamicProg {
     }
 
     /**
+     * Set queens on board.
+     * <p>
+     * See Lakman p. 379
+     */
+    int GRID_SIZE = 8;
+    public void placeQueens(int row, Integer[] columns, ArrayList<Integer[]> res) {
+        if (row == GRID_SIZE) {
+            res.add(columns.clone());
+        } else {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                if (checkValidPlace(columns, row, col)) {
+                    columns[row] = col;
+                    placeQueens(row + 1, columns, res);
+                }
+            }
+        }
+    }
+    private boolean checkValidPlace(Integer[] columns, int row1, int col1) {
+        for (int row2 = 0; row2 < row1; row2++) {
+            int col2 = columns[row2];
+
+            //horizontal check
+            if (col1 == col2) return false;
+
+            //diagonal check
+            int colDistance = Math.abs(col2 - col1);
+            int rowDistance = row1 - row2;
+
+            if (colDistance == rowDistance) return false;
+        }
+        return true;
+    }
+
+    /**
      * Unit tests.
      */
     public static void main(String[] args) {
