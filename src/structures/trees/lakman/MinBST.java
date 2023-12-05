@@ -40,6 +40,7 @@ public class MinBST {
         createLevelLinkedList(root, lists, 0);
         return lists;
     }
+
     private void createLevelLinkedList(TreeNode root, ArrayList<LinkedList<TreeNode>> lists, int level) {
         if (root == null) return;
 
@@ -57,6 +58,7 @@ public class MinBST {
         createLevelLinkedList(root.left, lists, level + 1);
         createLevelLinkedList(root.right, lists, level + 1);
     }
+
     public ArrayList<LinkedList<TreeNode>> createLevelLinkedList(TreeNode root) {
         ArrayList<LinkedList<TreeNode>> result = new ArrayList<>();
 
@@ -80,5 +82,52 @@ public class MinBST {
             }
         }
         return result;
+    }
+
+    /**
+     * Checks that a binary tree is balanced, O(NlogN) time
+     * <p>
+     * See Lakman p. 253
+     */
+    public boolean isBalanced(TreeNode root) {
+        if (root == null) return true;
+
+        int heightDiff = getHeight(root.left) - getHeight(root.right);
+
+        if (Math.abs(heightDiff) > 1) {
+            return false;
+        }
+
+        return isBalanced(root.left) && isBalanced(root.right);
+    }
+
+    /**
+     * Checks that a binary tree is balanced, O(N) time, O(logN) memory
+     * <p>
+     * See Lakman p. 253
+     */
+    private int getHeight(TreeNode root) {
+        if (root == null) return -1;
+        return Math.max(getHeight(root.left), getHeight(root.right)) + 1;
+    }
+
+    public boolean isBalancedOptimization(TreeNode root) {
+        return checkHeight(root) != Integer.MIN_VALUE;
+    }
+
+    public int checkHeight(TreeNode root) {
+        if (root == null) return -1;
+
+        int leftHeight = checkHeight(root.left);
+        if (leftHeight == Integer.MIN_VALUE) return Integer.MIN_VALUE; // Error
+
+        int rightHeight = checkHeight(root.right);
+        if (rightHeight == Integer.MIN_VALUE) return Integer.MIN_VALUE; // Error
+
+        int heightDiff = leftHeight - rightHeight;
+        if (Math.abs(heightDiff) > 1) {
+            return Integer.MIN_VALUE; // Find error -> return
+        }
+        return Math.max(leftHeight, rightHeight) + 1;
     }
 }
