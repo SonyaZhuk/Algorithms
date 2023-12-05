@@ -1,4 +1,4 @@
-package structures.trees;
+package structures.trees.lakman;
 
 /**
  * Binary search tree.
@@ -7,7 +7,7 @@ package structures.trees;
  */
 public class TreeNode {
     private int data; //public
-    private TreeNode left, right, parent; //public
+    public TreeNode left, right, parent; //public
     private int size = 0;
 
     public TreeNode(int d) {
