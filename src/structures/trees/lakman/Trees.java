@@ -201,6 +201,7 @@ public class Trees {
             return x;
         }
     }
+
     private TreeNode leftMostChild(TreeNode n) {
         if (n == null) {
             return null;
@@ -209,5 +210,108 @@ public class Trees {
             n = n.left;
         }
         return n;
+    }
+
+    /**
+     * Finds the first common ancestor for two nodes. O(d), d - the depth a deeper node.
+     * <p>
+     * See Lakman p. 265
+     */
+    public TreeNode commonAncestor(TreeNode p, TreeNode q) {
+        int delta = depth(p) - depth(q); // Вычисление разности глубин
+        TreeNode first = delta > 0 ? q : p; // Узел с меньшей глубиной
+        TreeNode second = delta > 0 ? p : q; // Узел с большей глубиной
+        second = goUpBy(second, Math.abs(delta)); // Глубокий узел поднимается
+
+        /* Find an paths intersection. */
+        while (first != second && first != null && second != null) {
+            first = first.parent;
+            second = second.parent;
+        }
+        return first == null || second == null ? null : first;
+    }
+
+    private TreeNode goUpBy(TreeNode node, int delta) {
+        while (delta > 0 && node != null) {
+            node = node.parent;
+            delta--;
+        }
+        return node;
+    }
+
+    private int depth(TreeNode node) {
+        int depth = 0;
+        while (node != null) {
+            node = node.parent;
+            depth++;
+        }
+        return depth;
+    }
+
+    /**
+     * Finds the first common ancestor for two nodes. O(t), t - a size of the first subtree of the first common ancestor.
+     * <p>
+     * See Lakman p. 266
+     */
+    public TreeNode commonAncestor(TreeNode root, TreeNode p, TreeNode q) {
+        /* Проверяет, что узел либо отсутствует в дереве, либо накрывает другой. */
+        if (!covers(root, p) || !covers(root, q)) {
+            return null;
+        } else if (covers(p, q)) {
+            return p;
+        } else if (covers(q, p)) {
+            return q;
+        }
+
+        /* Перемещаться вверх, пока не будет найден узел, накрывающий q. */
+        TreeNode sibling = getSibling(p);
+        TreeNode parent = p.parent;
+        while (!covers(sibling, q)) {
+            sibling = getSibling(parent);
+            parent = parent.parent;
+        }
+        return parent;
+    }
+
+    private boolean covers(TreeNode root, TreeNode p) {
+        if (root == null) return false;
+        if (root == p) return true;
+        return covers(root.left, p) || covers(root.right, p);
+    }
+
+    private TreeNode getSibling(TreeNode node) {
+        if (node == null || node.parent == null) {
+            return null;
+        }
+        TreeNode parent = node.parent;
+        return parent.left == node ? parent.right : parent.left;
+    }
+
+    /**
+     * Finds the first common ancestor for two nodes. Without links to ancestors approach.
+     * O(n), 2n nodes.
+     * <p>
+     * See Lakman p. 267
+     */
+    public TreeNode commonAncestorI(TreeNode root, TreeNode p, TreeNode q) {
+        /* Проверка оwибки - один узел отсутствует в дереве. */
+        if (!covers(root, p) || !covers(root, q)) {
+            return null;
+        }
+        return ancestorHelper(root, p, q);
+    }
+
+    private TreeNode ancestorHelper(TreeNode root, TreeNode p, TreeNode q) {
+        if (root == null || root == p || root == q) {
+            return root;
+        }
+
+        boolean pisOnLeft = covers(root.left, p);
+        boolean qisOnLeft = covers(root.left, q);
+        if (pisOnLeft != qisOnLeft) { // Узлы на разных сторонах
+            return root;
+        }
+        TreeNode childSide = pisOnLeft ? root.left : root.right;
+        return ancestorHelper(childSide, p, q);
     }
 }
