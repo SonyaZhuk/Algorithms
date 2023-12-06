@@ -8,7 +8,7 @@ import java.util.LinkedList;
  * <p>
  * See Lakman p. 250
  */
-public class MinBST {
+public class Trees {
 
     /**
      * Create min bst
@@ -129,5 +129,51 @@ public class MinBST {
             return Integer.MIN_VALUE; // Find error -> return
         }
         return Math.max(leftHeight, rightHeight) + 1;
+    }
+
+    /**
+     * Checks that tree is balanced search. Symmetric (in-order) traversal approach.
+     * <p>
+     * See Lakman p. 254
+     */
+    private Integer lastPrinted = null;
+
+    public boolean checkBST(TreeNode n) {
+        if (n == null) return true;
+
+        // recursion for left tree
+        if (!checkBST(n.left)) return false;
+        // checks the current node
+        if (lastPrinted != null && n.data <= lastPrinted) {
+            return false;
+        }
+        lastPrinted = n.data;
+
+        // recursion for right tree
+        if (!checkBST(n.right)) return false;
+
+        return true;
+    }
+
+    /**
+     * Checks that tree is balanced search. Using the property left <= current < right (min/max), O(N) time.
+     * <p>
+     * See Lakman p. 255
+     */
+    public boolean checkBSTI(TreeNode n) {
+        return checkBST(n, null, null);
+    }
+
+    private boolean checkBST(TreeNode n, Integer min, Integer max) {
+        if (n == null) {
+            return true;
+        }
+        if ((min != null && n.data <= min) || (max != null && n.data > max)) {
+            return false;
+        }
+        if (!checkBST(n.left, min, n.data) || !checkBST(n.right, n.data, max)) {
+            return false;
+        }
+        return true;
     }
 }

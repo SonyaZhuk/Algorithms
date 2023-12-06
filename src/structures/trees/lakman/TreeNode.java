@@ -6,7 +6,7 @@ package structures.trees.lakman;
  * Lakman p. 685
  */
 public class TreeNode {
-    private int data; //public
+    public int data; //public
     public TreeNode left, right, parent; //public
     private int size = 0;
 
