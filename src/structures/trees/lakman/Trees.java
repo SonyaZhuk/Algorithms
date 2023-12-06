@@ -156,7 +156,8 @@ public class Trees {
     }
 
     /**
-     * Checks that tree is balanced search. Using the property left <= current < right (min/max), O(N) time.
+     * Checks that tree is balanced search. Using the property left <= current < right (min/max),
+     * O(N) time, O(logN) memory.
      * <p>
      * See Lakman p. 255
      */
