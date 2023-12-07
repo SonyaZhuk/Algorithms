@@ -1,6 +1,7 @@
 package structures.trees.lakman;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -430,5 +431,37 @@ public class Trees {
         }
 
         return matchTree(rl.left, r2.left) && matchTree(rl.right, r2.right);
+    }
+
+    /**
+     * Finds a count of path that equals targetSum.
+     * Brute force, O(NlogN) time for a balanced tree, otherwise O(N^2).
+     * <p>
+     * See Lakman p. 282
+     */
+    public int countPathsWithSum(TreeNode root, int targetSum) {
+        if (root == null) return 0;
+
+        /* Подсчет путей с заданной суммой, начиная с корня. */
+        int pathsFromRoot = countPathsWithSumFromNode(root, targetSum, 0);
+
+        /* Проверка узлов слева и справа. */
+        int pathsOnLeft = countPathsWithSum(root.left, targetSum);
+        int pathsOnRight = countPathsWithSum(root.right, targetSum);
+
+        return pathsFromRoot + pathsOnLeft + pathsOnRight;
+    }
+
+    /* Возвращает количество путей с заданной суммой от данного узла. */
+    private int countPathsWithSumFromNode(TreeNode node, int targetSum, int currentSum) {
+        if (node == null) return 0;
+        currentSum += node.data;
+        int totalPaths = 0;
+        if (currentSum == targetSum) { // Найден путь от корня
+            totalPaths++;
+        }
+        totalPaths += countPathsWithSumFromNode(node.left, targetSum, currentSum);
+        totalPaths += countPathsWithSumFromNode(node.right, targetSum, currentSum);
+        return totalPaths;
     }
 }
