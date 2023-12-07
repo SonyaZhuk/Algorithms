@@ -294,7 +294,7 @@ public class Trees {
      * See Lakman p. 267
      */
     public TreeNode commonAncestorI(TreeNode root, TreeNode p, TreeNode q) {
-        /* Проверка оwибки - один узел отсутствует в дереве. */
+        /* Проверка ошибки - один узел отсутствует в дереве. */
         if (!covers(root, p) || !covers(root, q)) {
             return null;
         }
@@ -313,5 +313,65 @@ public class Trees {
         }
         TreeNode childSide = pisOnLeft ? root.left : root.right;
         return ancestorHelper(childSide, p, q);
+    }
+
+
+    /**
+     * Finds all sequences for the binary search tree which can create this tree.
+     * <p>
+     * See Lakman p. 271
+     */
+    public ArrayList<LinkedList<Integer>> allSequences(TreeNode node) {
+        final ArrayList<LinkedList<Integer>> result = new ArrayList<>();
+
+        if (node == null) {
+            result.add(new LinkedList<>());
+            return result;
+        }
+
+        final LinkedList<Integer> prefix = new LinkedList<>();
+        prefix.add(node.data);
+        /* Рекурсия по левому и правому поддереву. */
+        final ArrayList<LinkedList<Integer>> leftSeq = allSequences(node.left);
+        final ArrayList<LinkedList<Integer>> rightSeq = allSequences(node.right);
+
+        /* Переплетение всех списков с левой и правой стороны. */
+        for (LinkedList<Integer> left : leftSeq) {
+            for (LinkedList<Integer> right : rightSeq) {
+                final ArrayList<LinkedList<Integer>> weaved = new ArrayList<>();
+                weaveLists(left, right, weaved, prefix);
+                result.addAll(weaved);
+            }
+        }
+        return result;
+    }
+
+    /* Списки переплетаются всеми возможными способами. Алгоритм удаляет начало
+       из одного списка, проводит рекурсию, а затем проделывает то же самое с другим списком. */
+    private void weaveLists(LinkedList<Integer> first, LinkedList<Integer> second,
+                            ArrayList<LinkedList<Integer>> results, LinkedList<Integer> prefix) {
+        /* Один список пуст. Добавить остаток в [клонированный] prefix и сохранить результат. */
+        if (first.size() == 0 || second.size() == 0) {
+            LinkedList<Integer> result = (LinkedList<Integer>) prefix.clone();
+            result.addAll(first);
+            result.addAll(second);
+            results.add(result);
+            return;
+        }
+
+        /* Рекурсия с началом first, добавленным в prefix. Удаление начала
+           модифицирует first, поэтому в дальнейшем его необходимо вернуть на место. */
+        int headFirst = first.removeFirst();
+        prefix.addLast(headFirst);
+        weaveLists(first, second, results, prefix);
+        prefix.removeLast();
+        first.addFirst(headFirst);
+
+        /* Проделать то же с second, с модификацией и восстановлением списка.*/
+        int headSecond = second.removeFirst();
+        prefix.addLast(headSecond);
+        weaveLists(first, second, results, prefix);
+        prefix.removeLast();
+        second.addFirst(headSecond);
     }
 }
