@@ -1,7 +1,8 @@
 package structures.trees.lakman.randomnode;
 
 /**
- * Generate a random node. O(logN) with random optimization
+ * Generate a random node with random optimization.
+ * O(logN) time in case of balanced tree, O(D) time, D - max depth tree.
  * <p>
  * See Lakman p. 281
  */
