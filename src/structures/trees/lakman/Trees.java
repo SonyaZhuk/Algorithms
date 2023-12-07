@@ -374,4 +374,61 @@ public class Trees {
         prefix.removeLast();
         second.addFirst(headSecond);
     }
+
+    /**
+     * Checks that T2 is subtree T1. T1 > T2. O(n + m) memory and time
+     * <p>
+     * See Lakman p. 274
+     */
+    public boolean containsTree(TreeNode tl, TreeNode t2) {
+        //два дерева идентичны, если они имеют одинаковый порядок префиксного обхода.
+        StringBuilder string1 = new StringBuilder();
+        StringBuilder string2 = new StringBuilder();
+
+        getOrderString(tl, string1);
+        getOrderString(t2, string2);
+        return string1.indexOf(string2.toString()) != -1;
+    }
+
+    private void getOrderString(TreeNode node, StringBuilder sb) {
+        if (node == null) {
+            sb.append("Х"); // Добавление индикатора null
+            return;
+        }
+        sb.append(node.data + " "); // Добавление корня
+        getOrderString(node.left, sb); //Добавление левого узла
+        getOrderString(node.right, sb); //Добавление правого узла
+    }
+
+
+    /**
+     * Checks that T2 is subtree T1. T1 > T2. O(log(n) + log(m)) memory, O(nm) time (in worse case).
+     * <p>
+     * See Lakman p. 276
+     */
+    public boolean containsTreeI(TreeNode tl, TreeNode t2) {
+        if (t2 == null) return true; // Пустое дерево всегда является поддеревом
+        return subtree(tl, t2);
+    }
+
+    private boolean subtree(TreeNode rl, TreeNode r2) {
+        if (rl == null) {
+            return false; // Большое дерево пустое, а поддерево так и не найдено.
+        } else if (rl.data == r2.data && matchTree(rl, r2)) {
+            return true;
+        }
+        return subtree(rl.left, r2) || subtree(rl.right, r2);
+    }
+
+    private boolean matchTree(TreeNode rl, TreeNode r2) {
+        if (rl == null && r2 == null) {
+            return true; // В поддереве не осталось узлов
+        } else if (rl == null || r2 == null) {
+            return false; // Ровно одно дерево пусто, поэтому совпадения нет
+        } else if (rl.data != r2.data) {
+            return false; //Данные не совпадают
+        }
+
+        return matchTree(rl.left, r2.left) && matchTree(rl.right, r2.right);
+    }
 }
