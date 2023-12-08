@@ -1,5 +1,6 @@
 package algo.lakman;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -148,8 +149,62 @@ public class MediumTask {
         return count;
     }
 
+    /**
+     * Finds Math.min(elem - elem > 0). Brute force, O(NM) time.
+     * <p>
+     * See Lakman p. 501
+     */
+    public int findSmallestDiff(int[] arr1, int[] arr2) {
+        if (arr1.length == 0 || arr2.length == 0) return -1;
+
+        int min = Integer.MAX_VALUE;
+
+        for (int i = 0; i < arr1.length; i++) {
+            for (int j = 0; j < arr2.length; j++) {
+                int c = Math.abs(arr1[i] - arr2[j]);
+                if (c > 0) {
+                    min = Math.min(min, c);
+                }
+            }
+        }
+        return min;
+    }
+
+    /**
+     * Finds Math.min(elem - elem > 0). O(NlogN + MlogM) time.
+     * <p>
+     * See Lakman p. 503
+     */
+    public int findSmallestDiffI(int[] arr1, int[] arr2) {
+        if (arr1.length == 0 || arr2.length == 0) return -1;
+
+        Arrays.sort(arr1);
+        Arrays.sort(arr2);
+
+        int i = 0;
+        int j = 0;
+        int min = Integer.MAX_VALUE;
+
+        while(i < arr1.length && j < arr2.length) {
+            int c = Math.abs(arr1[i] - arr2[j]);
+            if (c < min) {
+                min = c;
+            }
+
+            if (arr1[i] < arr2[j]) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+
+        return min;
+    }
+
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
-        System.out.println(task.countFactZerosI(19));
+        int[] arr1 = {1, 3, 15, 11, 2};
+        int[] arr2 = {23, 127, 235, 19, 8};
+        System.out.println(task.findSmallestDiff(arr1, arr2));
     }
 }
