@@ -2,6 +2,7 @@ package algo.lakman;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 /**
@@ -222,10 +223,82 @@ public class MediumTask {
         return 1 ^ bit;
     }
 
+    private String[] smalls = {"Zero", "Оnе", "Two", "Three", "Four", "Five", "Six", "Seven",
+            "Eight", "Nine", "Теn", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen",
+            "Sixteen", "Seventeen", "Eighteen", "Nineteen"};
+
+    private String[] tens = {"", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"};
+
+    private String[] bigs = {"", "Thousand", "Million", "Billion"};
+    private String hundred = "Hundred";
+    private String negative = "Negative";
+
+    /**
+     * Converts number to text.
+     * <p>
+     * See Lakman p. 504
+     */
+    public String convert(int num) {
+        if (num == 0) {
+            return smalls[0];
+        } else if (num < 0) {
+            return negative + " " + convert(-1 * num);
+        }
+
+        final LinkedList<String> parts = new LinkedList<>();
+        int chunkCount = 0;
+
+        while (num > 0) {
+            if (num % 1000 != 0) {
+                String chunk = convertChunk(num % 1000) + " " + bigs[chunkCount];
+                parts.addFirst(chunk);
+            }
+            num /= 1000;
+            chunkCount++;
+        }
+
+        return listToString(parts);
+    }
+
+    private String convertChunk(int number) {
+        LinkedList<String> parts = new LinkedList<>();
+        // сотни
+        if (number >= 100) {
+            parts.addLast(smalls[number / 100]);
+            parts.addLast(hundred);
+            number %= 100;
+        }
+        //десятки
+        if (number >= 10 && number <= 19) {
+            parts.addLast(smalls[number]);
+        } else if (number >= 20) {
+            parts.addLast(tens[number / 10]);
+            number %= 10;
+        }
+
+        // единицы
+        if (number >= 1 && number <= 9) {
+            parts.addLast(smalls[number]);
+        }
+
+        return listToString(parts);
+    }
+
+    private String listToString(LinkedList<String> parts) {
+        StringBuilder sb = new StringBuilder();
+        while (parts.size() > 1) {
+            sb.append(parts.pop());
+            sb.append(" ");
+        }
+        sb.append(parts.pop());
+        return sb.toString();
+    }
+
+
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
         int[] arr1 = {1, 3, 15, 11, 2};
         int[] arr2 = {23, 127, 235, 19, 8};
-        System.out.println(task.getMax(15, 13));
+        System.out.println(task.convert(193));
     }
 }
