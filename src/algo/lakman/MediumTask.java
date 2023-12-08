@@ -294,11 +294,83 @@ public class MediumTask {
         return sb.toString();
     }
 
+    //---------------------------------------------------//
+
+    /**
+     * Operations minus using only the plus operation. O(k)
+     * <p>
+     * See Lakman p. 506
+     */
+    public int minus(int a, int b) {
+        return a + negate(b);
+    }
+
+    private int negate(int a) {
+        int neg = 0;
+        int newSign = (a < 0) ? 1 : -1;
+        while (a != 0) {
+            neg += newSign;
+            a += newSign;
+        }
+
+        return neg;
+    }
+
+    /**
+     * Operations multiply using only the plus operation.
+     * <p>
+     * See Lakman p. 507
+     */
+    public int multiply(int a, int b) {
+        if (b > a) {
+            multiply(b, a);
+        }
+
+        int res = -1;
+        int index = b;
+        if (b < 0) {
+            index = negate(b);
+        }
+        for (int i = 0; i < index; i++) {
+            res += a;
+        }
+
+        return ((b < 0 && a > 0) || (b < 0 && a < 0)) ?
+                negate(res + 1) : res + 1;
+    }
+
+    /**
+     * Operations divide using only the plus operation.
+     * <p>
+     * See Lakman p. 508
+     */
+    public int divide(int a, int b) {
+        if (b == 0)
+            throw new ArithmeticException();
+
+        int absA = abs(a);
+        int absB = abs(b);
+
+        int product = 0;
+        int x = 0;
+
+        while (product + absB <= absA) {
+            product += absB;
+            x++;
+        }
+
+        return ((a < 0 && b < 0) || (a > 0 && b > 0)) ? x : negate(x);
+    }
+
+    private int abs(int a) {
+        return (a < 0) ? negate(a) : a;
+    }
+
 
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
         int[] arr1 = {1, 3, 15, 11, 2};
         int[] arr2 = {23, 127, 235, 19, 8};
-        System.out.println(task.convert(193));
+        System.out.println(task.multiply(-7, -8));
     }
 }
