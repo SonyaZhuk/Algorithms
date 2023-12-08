@@ -185,7 +185,7 @@ public class MediumTask {
         int j = 0;
         int min = Integer.MAX_VALUE;
 
-        while(i < arr1.length && j < arr2.length) {
+        while (i < arr1.length && j < arr2.length) {
             int c = Math.abs(arr1[i] - arr2[j]);
             if (c < min) {
                 min = c;
@@ -201,10 +201,31 @@ public class MediumTask {
         return min;
     }
 
+    /**
+     * Finds Math.max(a, b) without any comparisons.
+     * <p>
+     * See Lakman p. 503
+     */
+    public int getMax(int a, int b) {
+        int k = sign(a - b);
+        int q = flip(k);
+        return a * k + b * q;
+    }
+
+    /* 1, a > 0, 0, a < 0 */
+    private int sign(int a) {
+        return flip((a >> 31) & 0x1);
+    }
+
+    /* 1 -> 0, 0 -> 1 */
+    private int flip(int bit) {
+        return 1 ^ bit;
+    }
+
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
         int[] arr1 = {1, 3, 15, 11, 2};
         int[] arr2 = {23, 127, 235, 19, 8};
-        System.out.println(task.findSmallestDiff(arr1, arr2));
+        System.out.println(task.getMax(15, 13));
     }
 }
