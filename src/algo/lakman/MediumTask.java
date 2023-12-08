@@ -106,8 +106,50 @@ public class MediumTask {
         two.setLocation(x, y);
     }
 
+
+    /**
+     * Finds ending zeros for n!.
+     * <p>
+     * See Lakman p. 500
+     */
+    public int countFactZeros(int num) {
+        int count = 0;
+        for (int i = 2; i <= num; i++) {
+            count += factorsOfFive(i);
+        }
+
+        return count;
+    }
+
+    private int factorsOfFive(int i) {
+        int count = 0;
+        while (i % 5 == 0) {
+            count++;
+            i /= 5;
+
+        }
+        return count;
+    }
+
+    /**
+     * Finds ending zeros for n!. Optimization.
+     * <p>
+     * See Lakman p. 500
+     */
+    public int countFactZerosI(int num) {
+        int count = 0;
+        if (num < 0)
+            return -1;
+
+        for (int i = 5; num / i > 0; i *= 5) {
+            count += num / i;
+        }
+
+        return count;
+    }
+
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
-        task.exchangeI(5, 8);
+        System.out.println(task.countFactZerosI(19));
     }
 }
