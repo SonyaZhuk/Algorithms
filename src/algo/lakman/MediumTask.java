@@ -431,6 +431,55 @@ public class MediumTask {
         return maxAliveYear;
     }
 
+    //-------------------------------------------------------------------------//
+    /**
+     * Builds springboard with using two types of planks. O(2^k) times, k - count of planks - without memo.
+     * O(k^2) - with memo.
+     * <p>
+     * See Lakman p. 514
+     */
+    private HashSet<Integer> lengths;
+    //memoization
+    private HashSet<String> visited = new HashSet<>();
+
+    public HashSet<Integer> springboard(int k, int shorter, int longer) {
+        lengths = new HashSet<>();
+        getLengths(k, 0, shorter, longer);
+        return lengths;
+    }
+
+    private void getLengths(int k, int total, int shorter, int longer) {
+        if (k == 0) {
+            lengths.add(total);
+            return;
+        }
+
+        //memoization
+        String key = k + " " + total;
+        if (visited.contains(key)) {
+            return;
+        }
+
+        getLengths(k - 1, total + shorter, shorter, longer);
+        getLengths(k - 1, total + longer, shorter, longer);
+        visited.add(key);
+    }
+
+    /**
+     * Builds springboard with using two types of planks.
+     * <p>
+     * See Lakman p. 516
+     */
+    public HashSet<Integer> springboardI(int k, int shorter, int longer) {
+        HashSet<Integer> lengths = new HashSet<>();
+        for (int nShorter = 0; nShorter <= k; nShorter++) {
+            int nlonger = k - nShorter;
+            int length = nShorter * shorter + nlonger * longer;
+            lengths.add(length);
+        }
+        return lengths;
+    }
+
 
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
