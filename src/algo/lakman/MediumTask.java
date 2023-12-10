@@ -1,9 +1,8 @@
 package algo.lakman;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.Map;
+import java.util.*;
+
+import static java.util.stream.Collectors.groupingBy;
 
 /**
  * Medium level tasks.
@@ -364,6 +363,72 @@ public class MediumTask {
 
     private int abs(int a) {
         return (a < 0) ? negate(a) : a;
+    }
+
+    //------------------------------------------------------//
+
+    /**
+     * Finds the year when max alive. Brute force, O(N*M) time
+     * <p>
+     * See Lakman p. 508
+     */
+    public int maxAliveYear(Person[] people, int min, int max) {
+        int maxAlive = 0;
+        int maxAliveYear = min;
+        for (int year = min; year <= max; year++) {
+            int alive = 0;
+            for (Person person : people) {
+                if (person.getBirth() <= year && year <= person.getDeath()) {
+                    alive++;
+                }
+            }
+            if (alive > maxAlive) {
+                maxAlive = alive;
+                maxAliveYear = year;
+            }
+        }
+
+        return maxAliveYear;
+    }
+
+    /**
+     * Finds the year when max alive. Brute force, O(N + M) time
+     * <p>
+     * See Lakman p. 513
+     */
+    public int maxAliveYearI(Person[] people, int min, int max) {
+        /* Построение массива прироста населения. */
+        int[] populationDeltas = getPopulationDeltas(people, min, max);
+        int maxAliveYear = getMaxAliveYear(populationDeltas);
+        return maxAliveYear + min;
+    }
+
+    /* Добавление годов рождения и смерти в массив прироста. */
+    private int[] getPopulationDeltas(Person[] people, int min, int max) {
+        int[] populationDeltas = new int[max - min + 2];
+        for (Person person : people) {
+            int birth = person.getBirth() - min;
+            populationDeltas[birth]++;
+            int death = person.getDeath() - min;
+            populationDeltas[death + 1]--;
+        }
+        return populationDeltas;
+    }
+
+    /* Вычисление текущих сумм и возвращение индекса с максимумом. */
+    private int getMaxAliveYear(int[] deltas) {
+        int maxAliveYear = 0;
+        int maxAlive = 0;
+        int currentlyAlive = 0;
+        for (int year = 0; year < deltas.length; year++) {
+            currentlyAlive += deltas[year];
+            if (currentlyAlive > maxAlive) {
+                maxAliveYear = year;
+                maxAlive = currentlyAlive;
+            }
+        }
+
+        return maxAliveYear;
     }
 
 
