@@ -540,6 +540,25 @@ public class MediumTask {
         return array.length - 1;
     }
 
+    /**
+     * Finds sub-array with max sum.
+     * <p>
+     * See Lakman p. 526
+     */
+    public int getMaxSum(int[] arr) {
+        int maxSum = 0;
+        int sum = 0;
+        for (int i = 0; i < arr.length; i++) {
+            sum += arr[i];
+            if (maxSum < sum) {
+                maxSum = sum;
+            } else if (sum < 0) {
+                sum = 0;
+            }
+        }
+        return maxSum;
+    }
+
 
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
