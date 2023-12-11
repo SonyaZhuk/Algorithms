@@ -480,6 +480,66 @@ public class MediumTask {
         return lengths;
     }
 
+    /**
+     * Finds indexes of sub-array that can be sorted for getting the full sorting array.
+     * <p>
+     * See Lakman p. 524
+     */
+    public String findUnsortedSequence(int[] array) {
+
+        int endLeft = findEndOfLeftSubsequence(array);
+        if (endLeft >= array.length - 1)
+            return array[0] + " " + array[array.length - 1];
+
+        int startRight = findStartOfRightSubsequence(array);
+
+        // Определение минимума и максимума
+        int maxIndex = endLeft; //Максимум левой стороны
+        int minIndex = startRight; //Минимум правой стороны
+        for (int i = endLeft + 1; i < startRight; i++) {
+            if (array[i] < array[minIndex]) minIndex = i;
+            if (array[i] > array[maxIndex]) maxIndex = i;
+        }
+
+        //Двигаться влево, пока не дойдем до array[miпIndex]
+        int leftIndex = shrinkLeft(array, minIndex, endLeft);
+
+        //Двигаться вправо, пока не дойдем до array[maxIndex]
+        int rightIndex = shrinkRight(array, maxIndex, startRight);
+
+        return leftIndex + " " + rightIndex;
+    }
+
+    private int findEndOfLeftSubsequence(int[] array) {
+        for (int i = 1; i < array.length; i++) {
+            if (array[i] < array[i - 1]) return i - 1;
+        }
+        return array.length - 1;
+    }
+
+    private int findStartOfRightSubsequence(int[] array) {
+        for (int i = array.length - 2; i >= 0; i--) {
+            if (array[i] > array[i + 1]) return i + 1;
+        }
+        return 0;
+    }
+
+    private int shrinkLeft(int[] array, int minIndex, int start) {
+        int comp = array[minIndex];
+        for (int i = start - 1; i >= 0; i--) {
+            if (array[i] <= comp) return i + 1;
+        }
+        return 0;
+    }
+
+    private int shrinkRight(int[] array, int maxIndex, int start) {
+        int comp = array[maxIndex];
+        for (int i = start; i < array.length; i++) {
+            if (array[i] >= comp) return i - 1;
+        }
+        return array.length - 1;
+    }
+
 
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
