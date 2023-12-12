@@ -577,7 +577,7 @@ public class MediumTask {
                     final String candidate = buildFromPattern(pattern, main, alt);
                     if (candidate.equals(value)) {
                         return true;
-                   }
+                    }
                 }
             }
         }
@@ -666,6 +666,44 @@ public class MediumTask {
             }
         }
         return true;
+    }
+
+    //---------------------------------------------------------------------------//
+
+    /**
+     * Computes sizes for all lands. O(W*H) time.
+     * <p>
+     * See Lakman p. 531
+     */
+    public List<Integer> computePondSizes(int[][] land) {
+        final List<Integer> pondSizes = new ArrayList<>();
+        for (int row = 0; row < land.length; row++) {
+            for (int col = 0; col < land[row].length; col++) {
+                if (land[row][col] == 0) {
+                    int size = computeSize(land, row, col);
+                    pondSizes.add(size);
+                }
+            }
+        }
+
+        return pondSizes;
+    }
+
+    private int computeSize(int[][] land, int row, int col) {
+        if (row < 0 || col < 0 || row >= land.length || col >= land[row].length || land[row][col] != 0) {
+            return 0;
+        }
+
+        int size = 1;
+        land[row][col] = -1;  //marks as visited
+
+        for (int dr = -1; dr <= 1; dr++) {
+            for (int dc = -1; dc <= 1; dc++) {
+                size += computeSize(land, row + dr, col + dc);
+            }
+        }
+
+        return size;
     }
 
 
