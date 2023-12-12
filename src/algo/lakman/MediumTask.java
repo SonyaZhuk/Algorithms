@@ -560,6 +560,115 @@ public class MediumTask {
     }
 
 
+    /**
+     * Checks if value matches on pattern. Brute force, O(N^4) time.
+     * <p>
+     * See Lakman p. 528
+     */
+    public boolean doesMatch(String pattern, String value) {
+        if (pattern.length() == 0) return value.length() == 0;
+
+        int size = value.length();
+        for (int i = 0; i < size; i++) {
+            final String main = value.substring(0, i);
+            for (int j = i; j <= size; j++) {
+                for (int k = j; k <= size; k++) {
+                    final String alt = value.substring(j, k);
+                    final String candidate = buildFromPattern(pattern, main, alt);
+                    if (candidate.equals(value)) {
+                        return true;
+                   }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private String buildFromPattern(String pattern, String main, String alt) {
+        final StringBuffer sb = new StringBuffer();
+        char first = pattern.charAt(0);
+        for (char с : pattern.toCharArray()) {
+            if (с == first) {
+                sb.append(main);
+            } else {
+                sb.append(alt);
+            }
+        }
+        return sb.toString();
+    }
+
+    /**
+     * Checks if value matches on pattern. O(N^2)
+     * <p>
+     * See Lakman p. 530
+     */
+    public boolean doesMatchI(String pattern, String value) {
+        if (pattern.length() == 0) return value.length() == 0;
+
+        char mainChar = pattern.charAt(0);
+        char altChar = mainChar == 'а' ? 'b' : 'a';
+        int size = value.length();
+
+        int countOfMain = countOf(pattern, mainChar);
+        int countOfAlt = pattern.length() - countOfMain;
+
+        int firstAlt = pattern.indexOf(altChar);
+        int maxMainSize = size / countOfMain;
+
+
+        for (int mainSize = 0; mainSize <= maxMainSize; mainSize++) {
+            int remainingLength = size - mainSize * countOfMain;
+            if (countOfAlt == 0 || remainingLength % countOfAlt == 0) {
+                int altIndex = firstAlt * mainSize;
+                int altSize = countOfAlt == 0 ? 0 : remainingLength / countOfAlt;
+                if (matches(pattern, value, mainSize, altSize, altIndex)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private int countOf(String pattern, char c) {
+        int count = 0;
+        for (int i = 0; i < pattern.length(); i++) {
+            if (pattern.charAt(i) == c) {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    /* Перебор по шаблону и значению. Для каждого символа в шаблоне
+       проверяем, является ли он основным или альтернативным. Затем
+       проверяем, соответствует ли следующая группа символов value
+       исходному набору символов (основному или альтернативному). */
+    private boolean matches(String pattern, String value, int mainSize, int altSize, int firstAlt) {
+        int stringIndex = mainSize;
+        for (int i = 1; i < pattern.length(); i++) {
+            boolean bool = pattern.charAt(i) == pattern.charAt(0);
+            int size = bool ? mainSize : altSize;
+            int offset = bool ? 0 : firstAlt;
+            if (!isEqual(value, offset, stringIndex, size)) {
+                return false;
+            }
+            stringIndex += size;
+        }
+        return true;
+    }
+
+    /* Проверка равенства двух подстрок с заданными смещениями и размером size. */
+    private boolean isEqual(String sl, int offset1, int offset2, int size) {
+        for (int i = 0; i < size; i++) {
+            if (sl.charAt(offset1 + i) != sl.charAt(offset2 + i)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
         int[] arr1 = {1, 3, 15, 11, 2};
