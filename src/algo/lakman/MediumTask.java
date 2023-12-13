@@ -845,12 +845,29 @@ public class MediumTask {
         return new int[]{-1, -1};
     }
 
-
-    public static void main(String[] args) {
-        MediumTask task = new MediumTask();
-        int[] arr1 = {1, 3, 15, 11, 2};
-        int[] arr2 = {23, 127, 235, 19, 8};
-        var res = task.getValidT9Words("8733", new String[]{"tree", "appl", "used", "nuts"});
-        System.out.println();
+    /**
+     * Generates Random(7) with using Random(5). Uniform distribution.
+     * <p>
+     * See Lakman p. 548
+     */
+    public int rand7() {
+        final Random random = new Random();
+        while (true) {
+            //ровно один способ получения каждого числа из диапазона от О до 24.
+            //Это гарантирует, что все значения равновероятны.
+            int num = 5 * random.nextInt(5) + random.nextInt(5);
+            if (num < 21) {
+                return num % 7;
+            }
+        }
     }
-}
+
+
+        public static void main (String[]args){
+            MediumTask task = new MediumTask();
+            int[] arr1 = {1, 3, 15, 11, 2};
+            int[] arr2 = {23, 127, 235, 19, 8};
+            var res = task.getValidT9Words("8733", new String[]{"tree", "appl", "used", "nuts"});
+            System.out.println();
+        }
+    }
