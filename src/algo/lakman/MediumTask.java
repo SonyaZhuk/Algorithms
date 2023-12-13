@@ -862,12 +862,74 @@ public class MediumTask {
         }
     }
 
-
-        public static void main (String[]args){
-            MediumTask task = new MediumTask();
-            int[] arr1 = {1, 3, 15, 11, 2};
-            int[] arr2 = {23, 127, 235, 19, 8};
-            var res = task.getValidT9Words("8733", new String[]{"tree", "appl", "used", "nuts"});
-            System.out.println();
+    /**
+     * Finds pairs (z, y) in array that x + y = sum, with duplicates. O(N^2) time.
+     * <p>
+     * See Lakman p. 550
+     */
+    public List<String> getPairSums(int[] array, int sum) {
+        final List<String> res = new ArrayList<>();
+        for (int i = 0; i < array.length; i++) {
+            for (int j = i + 1; j < array.length - 1; j++) {
+                if (array[i] + array[j] == sum) {
+                    res.add(array[i] + " " + array[j]);
+                }
+            }
         }
+        return res;
     }
+
+    /**
+     * Finds pairs (z, y) in array that x + y = sum, without duplicates. O(N) time.
+     * <p>
+     * See Lakman p. 551
+     */
+    public List<String> getPairSumsI(int[] array, int sum) {
+        final List<String> res = new ArrayList<>();
+        final Set<Integer> elements = new HashSet<>();
+        for (int e : array) {
+            int diff = sum - e;
+            if (elements.contains(diff) && !elements.contains(e)) {
+                res.add(e + " " + diff);
+            }
+            elements.add(e);
+        }
+
+        return res;
+    }
+
+    /**
+     * Finds pairs (z, y) in array that x + y = sum, without duplicates. O(N*LogN) time.
+     * <p>
+     * See Lakman p. 552
+     */
+    public List<String> printPairSums(int[] array, int sum) {
+        Arrays.sort(array);
+        int first = 0;
+        int last = array.length - 1;
+
+        final List<String> res = new ArrayList<>();
+
+        while (first < last) {
+            int currSum = array[first] + array[last];
+            if (currSum == sum) {
+                res.add(array[first] + " " + array[last]);
+                first++;
+                last--;
+            } else {
+                if (currSum < sum) first++;
+                else last--;
+            }
+        }
+        return res;
+    }
+
+
+    public static void main(String[] args) {
+        MediumTask task = new MediumTask();
+        int[] arr1 = {1, 3, 15, 11, 2};
+        int[] arr2 = {23, 127, 235, 19, 8};
+        var res = task.getValidT9Words("8733", new String[]{"tree", "appl", "used", "nuts"});
+        System.out.println();
+    }
+}
