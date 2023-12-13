@@ -1,6 +1,7 @@
 package algo.lakman;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.groupingBy;
 
@@ -713,9 +714,10 @@ public class MediumTask {
      * <p>
      * See Lakman p. 534
      */
-   private char[][] t9Letters = {null, null, {'a', 'b', 'с'}, {'d', 'e', 'f'},
-             { 'g' , 'h' , 'i' } , { 'j' , 'k' , 'l' } , { 'm' , 'n' , 'o' } , { 'p' , 'q' , 'r' , 's' } ,
-             { 't', 'u' , 'v'} , { 'w', 'х' , 'у', 'z'}};
+    private char[][] t9Letters = {null, null, {'a', 'b', 'с'}, {'d', 'e', 'f'},
+            {'g', 'h', 'i'}, {'j', 'k', 'l'}, {'m', 'n', 'o'}, {'p', 'q', 'r', 's'},
+            {'t', 'u', 'v'}, {'w', 'х', 'у', 'z'}};
+
     public List<String> getValidT9Words(String numbers, String[] words) {
         return initializeDictionary(words).get(numbers);
     }
@@ -765,12 +767,90 @@ public class MediumTask {
         return sb.toString();
     }
 
+    //----------------------------------------------------------------------//
+
+    /**
+     * Finds two elements that can be swept and sums of two arrays will be equal. O(N*M) time.
+     * <p>
+     * See Lakman p. 538
+     */
+    public int[] findSwapValues(int[] arr1, int[] arr2) {
+        int target = getTarget(arr1, arr2);
+
+        for (int i : arr1) {
+            for (int j : arr2) {
+                if (i - j == target) {
+                    return new int[]{i, j};
+                }
+            }
+        }
+        return new int[]{-1, -1};
+    }
+
+    private int getTarget(int[] arr1, int[] arr2) {
+        int sum1 = Arrays.stream(arr1).sum();
+        int sum2 = Arrays.stream(arr2).sum();
+        if ((sum1 - sum2) % 2 != 0)
+            throw new IllegalArgumentException();
+        return (sum1 - sum2) / 2;
+    }
+
+    /**
+     * Finds two elements that can be swept and sums of two arrays will be equal. O(N + M) time.
+     * <p>
+     * See Lakman p. 540
+     */
+    public int[] findSwapValuesI(int[] arr1, int[] arr2) {
+        int target = getTarget(arr1, arr2);
+        return findDifference(arr1, arr2, target);
+    }
+
+    private int[] findDifference(int[] arr1, int[] arr2, int target) {
+        final Set<Integer> contents2 = Arrays.stream(arr2).boxed().collect(Collectors.toSet());
+        for (int i : arr1) {
+            int j = i - target;
+            if (contents2.contains(j)) {
+                return new int[]{i, j};
+            }
+        }
+        return new int[]{-1, -1};
+    }
+
+    /**
+     * Finds two elements that can be swept and sums of two arrays will be equal. For sorted arrays case.
+     * O(N + M) time.
+     * <p>
+     * See Lakman p. 540
+     */
+    public int[] findSwapValuesII(int[] arr1, int[] arr2) {
+        Integer target = getTarget(arr1, arr2);
+        return findDifferenceI(arr1, arr2, target);
+    }
+
+    private int[] findDifferenceI(int[] arr1, int[] arr2, int target) {
+        int i = 0;
+        int j = 0;
+
+        while (i < arr1.length && j < arr2.length) {
+            int diff = arr1[i] - arr2[j];
+            if (diff == target) {
+                return new int[]{i, j};
+            } else if (diff < target) {
+                i++;
+            } else {
+                j++;
+            }
+        }
+
+        return new int[]{-1, -1};
+    }
+
 
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
         int[] arr1 = {1, 3, 15, 11, 2};
         int[] arr2 = {23, 127, 235, 19, 8};
-        var res = task.getValidT9Words("8733", new String[] {"tree", "appl", "used", "nuts"});
+        var res = task.getValidT9Words("8733", new String[]{"tree", "appl", "used", "nuts"});
         System.out.println();
     }
 }
