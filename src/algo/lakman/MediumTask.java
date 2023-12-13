@@ -706,11 +706,71 @@ public class MediumTask {
         return size;
     }
 
+    //----------------------------------------------------------------------//
+
+    /**
+     * Finds the list of words for mobile digits. O(N) time.
+     * <p>
+     * See Lakman p. 534
+     */
+   private char[][] t9Letters = {null, null, {'a', 'b', 'с'}, {'d', 'e', 'f'},
+             { 'g' , 'h' , 'i' } , { 'j' , 'k' , 'l' } , { 'm' , 'n' , 'o' } , { 'p' , 'q' , 'r' , 's' } ,
+             { 't', 'u' , 'v'} , { 'w', 'х' , 'у', 'z'}};
+    public List<String> getValidT9Words(String numbers, String[] words) {
+        return initializeDictionary(words).get(numbers);
+    }
+
+    /* Построение хеш-таблицы, связывающей последовательность цифр
+       со всеми словами, имеющими такое представление. */
+    private Map<String, List<String>> initializeDictionary(String[] words) {
+
+        /* Построение хеш-таблицы, связывающей буквы с цифрами */
+        final Map<Character, Character> letterToNumberMap = createLetterToNumberMap();
+
+        /* Создание отображения "слово-> последовательность цифр". */
+        final Map<String, List<String>> wordsToNumbers = new HashMap<>();
+        for (String word : words) {
+            final String numbers = convertToT9(word, letterToNumberMap);
+            final List<String> curr = wordsToNumbers.containsKey(numbers) ?
+                    wordsToNumbers.get(numbers) : new ArrayList<>();
+            curr.add(word);
+            wordsToNumbers.put(numbers, curr);
+        }
+        return wordsToNumbers;
+    }
+
+    /*Переход к отображению "буква-> цифра". */
+    private Map<Character, Character> createLetterToNumberMap() {
+        final Map<Character, Character> letterToNumberMap = new HashMap<>();
+        for (int i = 0; i < t9Letters.length; i++) {
+            char[] letters = t9Letters[i];
+            if (letters != null) {
+                for (char letter : letters) {
+                    char с = Character.forDigit(i, 10);
+                    letterToNumberMap.put(letter, с);
+                }
+            }
+        }
+        return letterToNumberMap;
+    }
+
+    private String convertToT9(String word, Map<Character, Character> letterToNumberMap) {
+        final StringBuilder sb = new StringBuilder();
+        for (char c : word.toCharArray()) {
+            if (letterToNumberMap.containsKey(c)) {
+                char digit = letterToNumberMap.get(c);
+                sb.append(digit);
+            }
+        }
+        return sb.toString();
+    }
+
 
     public static void main(String[] args) {
         MediumTask task = new MediumTask();
         int[] arr1 = {1, 3, 15, 11, 2};
         int[] arr2 = {23, 127, 235, 19, 8};
-        System.out.println(task.multiply(-7, -8));
+        var res = task.getValidT9Words("8733", new String[] {"tree", "appl", "used", "nuts"});
+        System.out.println();
     }
 }
