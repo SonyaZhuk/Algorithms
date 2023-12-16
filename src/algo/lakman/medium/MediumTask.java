@@ -3,8 +3,6 @@ package algo.lakman.medium;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.groupingBy;
-
 /**
  * Medium level tasks.
  * <p>
