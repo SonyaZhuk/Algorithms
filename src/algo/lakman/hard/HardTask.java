@@ -59,4 +59,41 @@ public class HardTask {
             cards[i] = temp;
         }
     }
+
+    /**
+     * Random subset of m elements.
+     * <p>
+     * See Lakman p. 563
+     */
+    public int[] pickMRecursively(int[] arr, int m, int i) {
+        if (i + 1 == m) {
+            int[] subset = new int[m + 1];
+            System.arraycopy(arr, 0, subset, 0, m);
+            return subset;
+        } else if (i + 1 > m) {
+            int[] subset = pickMRecursively(arr, m, i - 1);
+            int k = rand(0, i);
+            if (k < m) {
+                subset[k] = arr[i];
+            }
+            return subset;
+        }
+        return null;
+    }
+
+    public int[] pickMIteratively(int[] arr, int m) {
+        int[] subset = new int[m];
+
+        for (int i = 0; 1 < m; i++) {
+            subset[i] = arr[i];
+        }
+
+        for (int i = m; i < arr.length; i++) {
+            int k = rand(0, i);
+            if (k < m) {
+                subset[k] = arr[i];
+            }
+        }
+        return subset;
+    }
 }
