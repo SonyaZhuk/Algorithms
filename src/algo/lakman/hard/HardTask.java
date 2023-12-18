@@ -1,7 +1,6 @@
 package algo.lakman.hard;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Hard level tasks.
@@ -213,5 +212,109 @@ public class HardTask {
         } else {
             return roundUp / 10;
         }
+    }
+
+    /**
+     * Finds k-th number, where 3^a * 5^b * 7^c. Brute force, О(k ^ 3 * log k) time complexity.
+     * <p>
+     * See Lakman p. 582
+     */
+    public int getKthMagicNumber(int k) {
+        List<Integer> seq = allPossibleKFactors(k);
+        Collections.sort(seq);
+        return seq.get(k);
+    }
+
+    private List<Integer> allPossibleKFactors(int k) {
+        List<Integer> values = new ArrayList<>();
+        for (int a = 0; a <= k; a++) {
+            int powA = (int) Math.pow(a, 3);
+            for (int b = 0; b <= k; b++) {
+                int powB = (int) Math.pow(b, 5);
+                for (int c = 0; c <= k; c++) {
+                    int powC = (int) Math.pow(c, 7);
+                    int value = powA * powB * powC;
+                    if (value < 0 || powA == Integer.MAX_VALUE ||
+                            powB == Integer.MAX_VALUE || powC == Integer.MAX_VALUE) {
+                        value = Integer.MAX_VALUE;
+                    }
+                    values.add(value);
+                }
+            }
+        }
+        return values;
+    }
+
+    /**
+     * Finds k-th number, where 3^a * 5^b * 7^c.
+     * <p>
+     * See Lakman p. 584
+     */
+    public int getKthMagicNumberI(int k) {
+        if (k < 0) return 0;
+
+        int val = 1;
+        final Queue<Integer> queue = new LinkedList<>();
+        addProducts(queue, 1);
+        for (int i = 0; i < k; i++) {
+            val = removeMin(queue);
+            addProducts(queue, val);
+        }
+        return val;
+    }
+
+    private void addProducts(Queue<Integer> q, int v) {
+        q.add(v * 3);
+        q.add(v * 5);
+        q.add(v * 7);
+    }
+
+    private int removeMin(Queue<Integer> queue) {
+        int min = queue.peek();
+        for (Integer v : queue) {
+            if (min > v) {
+                min = v;
+            }
+        }
+        while (queue.contains(min)) {
+            queue.remove(min);
+        }
+        return min;
+    }
+
+    /**
+     * Finds k-th number, where 3^a * 5^b * 7^c.
+     * <p>
+     * See Lakman p. 584
+     */
+    public int getKthMagicNumberII(int k) {
+        if (k < 0) return 0;
+
+        int value = 0;
+
+        final Queue<Integer> queue3 = new LinkedList<>();
+        final Queue<Integer> queue5 = new LinkedList<>();
+        final Queue<Integer> queue7 = new LinkedList<>();
+        queue3.add(1);
+
+        /* итерации с 0-й по k-ю. */
+        for (int i = 0; i <= k; i++) {
+            int v3 = queue3.size() > 0 ? queue3.peek() : Integer.MAX_VALUE;
+            int v5 = queue5.size() > 0 ? queue5.peek() : Integer.MAX_VALUE;
+            int v7 = queue7.size() > 0 ? queue7.peek() : Integer.MAX_VALUE;
+
+            if (value == v3) { // in queue 3, 5, 7
+                queue3.remove();
+                queue3.add(3 * value);
+                queue5.add(5 * value);
+            } else if (value == v5) { // in queue 5, 7
+                queue5.remove();
+                queue5.add(5 * value);
+            } else if (value == v7) { // in queue 7
+                queue7.remove();
+            }
+            queue7.add(7 * value); // Всегда в Q7
+        }
+        return value;
     }
 }
