@@ -1,5 +1,7 @@
 package algo.lakman.hard;
 
+import algo.lakman.medium.MediumTask;
+
 import java.util.*;
 
 /**
@@ -316,5 +318,62 @@ public class HardTask {
             queue7.add(7 * value); // Всегда в Q7
         }
         return value;
+    }
+
+
+    /**
+     * Finds a majority element (count(element) > arr.size/2). O(N^2) time complexity, O(1) memory.
+     * <p>
+     * See Lakman p. 587
+     */
+    public int findMajorityElement(int[] arr) {
+        for (int i = 0; i < arr.length; i++) {
+            if (isMajority(arr, arr[i])) {
+                return arr[i];
+            }
+        }
+        return -1;
+    }
+
+    private boolean isMajority(int[] arr, int el) {
+        int count = 0;
+        for (int e : arr) {
+            if (e == el) count++;
+        }
+        return count > arr.length / 2;
+    }
+
+
+    /**
+     * Finds a majority element (count(element) > arr.size/2). O(N) time complexity, O(1) memory.
+     * <p>
+     * See Lakman p. 590
+     */
+    public int findMajorityElementI(int[] arr) {
+        int candidate = getCandidate(arr);
+        return isMajority(arr, candidate) ? candidate : -1;
+    }
+
+    private int getCandidate(int[] arr) {
+        int majority = 0;
+        int count = 0;
+        for (int el : arr) {
+            if (count == 0) {
+                majority = el;
+            }
+            if (el == majority) {
+                count++;
+            } else {
+                count--;
+            }
+        }
+        return majority;
+    }
+
+    public static void main(String[] args) {
+        HardTask task = new HardTask();
+        int[] arr = {3, 1, 7, 1, 3, 7, 3, 7, 7, 7, 7};
+        var res = task.findMajorityElementI(arr);
+        System.out.println(res);
     }
 }
