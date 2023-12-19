@@ -1,7 +1,5 @@
 package algo.lakman.hard;
 
-import algo.lakman.medium.MediumTask;
-
 import java.util.*;
 
 /**
