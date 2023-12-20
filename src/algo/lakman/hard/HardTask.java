@@ -519,6 +519,46 @@ public class HardTask {
         return sum;
     }
 
+    /**
+     * Finds a median for randomly generator of numbers. O(1) time complexity, update - O(logN) time complexity.
+     * <p>
+     * Max-heap, min-heap.
+     * if maxHeap.size() > min .Неар. size() => median = maxHeap.top();
+     * if maxHeap.size() == minHeap.size() => median = (maxHeap.top() + minHeap.top()) / 2.
+     * <p>
+     * See Lakman p. 630
+     */
+
+    private Comparator<Integer> maxHeapComparator, minHeapComparator;
+    private PriorityQueue<Integer> maxHeap, minHeap;
+
+    public void addNewNumber(int randomNumber) {
+        if (maxHeap.size() == minHeap.size()) {
+            if ((minHeap.peek() != null) &&
+                    randomNumber > minHeap.peek()) {
+                maxHeap.offer(minHeap.poll());
+                minHeap.offer(randomNumber);
+            } else {
+                maxHeap.offer(randomNumber);
+            }
+        } else {
+            if (randomNumber < maxHeap.peek()) {
+                minHeap.offer(maxHeap.poll());
+                maxHeap.offer(randomNumber);
+            } else {
+                minHeap.offer(randomNumber);
+            }
+        }
+    }
+
+    private double getMedian() {
+        if (maxHeap.isEmpty()) {
+            return 0;
+        }
+        return (maxHeap.size() == minHeap.size()) ?
+                ((double) minHeap.peek() + (double) maxHeap.peek()) / 2 : maxHeap.peek();
+    }
+
     public static void main(String[] args) {
         HardTask task = new HardTask();
         int[] arr = {1, 2, 3, 5};
