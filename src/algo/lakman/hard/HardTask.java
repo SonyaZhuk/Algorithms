@@ -368,6 +368,49 @@ public class HardTask {
         return majority;
     }
 
+    /**
+     * Finds the longest word that consist in list of words.
+     * <p>
+     * See Lakman p. 607
+     */
+    public String findLongestWord(String[] arr) {
+        final Map<String, Boolean> map = new HashMap<>();
+        for (String str : arr) {
+            map.put(str, true);
+        }
+        Arrays.sort(arr, new Comparator() {
+            public int compare(Object o1, Object o2) {
+                String s1 = (String) o1;
+                String s2 = (String) o2;
+                if (s1.length() < s2.length()) return 1;
+                else if (s1.length() > s2.length()) return -1;
+                return 0;
+            }
+        });
+
+        for (String str : arr) {
+            if (canBuildWord(str, true, map)) {
+                return str;
+            }
+        }
+        return "";
+    }
+
+    private boolean canBuildWord(String str, boolean isOriginalWord, Map<String, Boolean> map) {
+        if (map.containsKey(str) && !isOriginalWord)
+            return map.get(str);
+
+        for (int i = 1; i < str.length(); i++) {
+            String left = str.substring(0, i);
+            String right = str.substring(i);
+            if (map.containsKey(left) && map.get(left) && canBuildWord(right, false, map)) {
+                return true;
+            }
+        }
+        map.put(str, false);
+        return false;
+    }
+
     public static void main(String[] args) {
         HardTask task = new HardTask();
         int[] arr = {3, 1, 7, 1, 3, 7, 3, 7, 7, 7, 7};
