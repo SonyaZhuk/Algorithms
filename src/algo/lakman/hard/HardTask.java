@@ -1,5 +1,6 @@
 package algo.lakman.hard;
 
+import java.math.BigInteger;
 import java.util.*;
 
 /**
@@ -455,10 +456,73 @@ public class HardTask {
         return oneAway;
     }
 
+    /**
+     * Finds a missing value from 1...N. O(N) time complexity, O(1) memory.
+     * <p>
+     * See Lakman p. 626
+     */
+    public int missingOne(int[] array) {
+        int sum = Arrays.stream(array).sum();
+        int len = array.length + 1;
+        return ((len * (len + 1)) / 2 - sum);
+    }
+
+    public int missingOneI(int[] array) {
+        BigInteger arraySum = new BigInteger("0");
+        for (int i = 0; i < array.length; i++) {
+            BigInteger value = new BigInteger(array[i] + "");
+            arraySum = arraySum.add(value);
+        }
+
+        int len = array.length + 1;
+        BigInteger fullSum = new BigInteger(((len * (len + 1)) / 2 + "0"));
+        return (fullSum.subtract(arraySum)).intValue();
+    }
+
+    /**
+     * Finds a missing two values from 1...N. O(N) time complexity, O(1) memory.
+     * <p>
+     * See Lakman p. 628
+     */
+    public int[] missingTwoII(int[] array) {
+        int maxValue = array.length + 2;
+        int remSquare = squareSumToN(maxValue, 2);
+        int remOne = maxValue * (maxValue + 1) / 2;
+
+        for (int i = 0; i < array.length; i++) {
+            remSquare -= array[i] * array[i];
+            remOne -= array[i];
+        }
+        return solveQuadEquation(remSquare, remOne);
+    }
+
+    private int[] solveQuadEquation(int r1, int r2) {
+        int a = 2;
+        int b = -2 * r1;
+        int c = r1 * r1 - r2;
+
+        double part1 = -1 * b;
+        double part2 = Math.sqrt(b * b - 4 * a * c);
+        double part3 = 2 * a;
+
+        int solutionX = (int) ((part1 + part2) / part3);
+        int solutionY = r1 - solutionX;
+
+        return new int[]{solutionX, solutionY};
+    }
+
+    private int squareSumToN(int n, int power) {
+        int sum = 0;
+        for (int i = 1; i <= n; i++) {
+            sum += (int) Math.pow(i, power);
+        }
+        return sum;
+    }
+
     public static void main(String[] args) {
         HardTask task = new HardTask();
-        int[] arr = {3, 1, 7, 1, 3, 7, 3, 7, 7, 7, 7};
-        var res = task.findMajorityElementI(arr);
+        int[] arr = {1, 2, 3, 5};
+        var res = task.missingOne(arr);
         System.out.println(res);
     }
 }
