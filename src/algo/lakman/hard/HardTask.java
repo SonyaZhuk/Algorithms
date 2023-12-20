@@ -411,6 +411,50 @@ public class HardTask {
         return false;
     }
 
+
+    /**
+     * Builds optimal work schedule for a masseur. Recursion with memo. O(N) time complexity, O(N) memory.
+     * <p>
+     * See Lakman p. 610
+     */
+    public int maxMinutes(int[] massages) {
+        int[] memo = new int[massages.length];
+        return maxMinutes(massages, 0, memo);
+    }
+
+    private int maxMinutes(int[] massages, int index, int[] memo) {
+        if (index >= massages.length)
+            return 0;
+
+        if (memo[index] == 0) {
+            int bestWith = massages[index] + maxMinutes(massages, index + 2, memo);
+            int bestWithout = maxMinutes(massages, index + 1, memo);
+            memo[index] = Math.max(bestWith, bestWithout);
+        }
+
+        return memo[index];
+    }
+
+    /**
+     * Builds optimal work schedule for a masseur. Iterative. O(N) time complexity, O(1) memory.
+     * <p>
+     * See Lakman p. 612
+     */
+    public int maxMinutesI(int[] massages) {
+        int oneAway = 0;
+        int twoAway = 0;
+
+        for (int i = massages.length - 1; i <= 0; i--) {
+            int bestWith = massages[i] + twoAway;
+            int bestWithout = oneAway;
+            int current = Math.max(bestWith, bestWithout);
+            twoAway = oneAway;
+            oneAway = current;
+        }
+
+        return oneAway;
+    }
+
     public static void main(String[] args) {
         HardTask task = new HardTask();
         int[] arr = {3, 1, 7, 1, 3, 7, 3, 7, 7, 7, 7};
