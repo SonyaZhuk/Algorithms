@@ -1,5 +1,6 @@
 package algo.lakman.hard.wordslocations;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Trie {
@@ -12,6 +13,12 @@ public class Trie {
     public Trie() {
     }
 
+    public Trie(ArrayList<String> words) {
+        for (String word : words) {
+            insertString(word, 0);
+        }
+    }
+
     public List<Integer> search(String s) {
         return root.search(s);
     }
@@ -22,5 +29,10 @@ public class Trie {
 
     public TrieNode getRoot() {
         return root;
+    }
+
+    public boolean contains(String s) {
+        //TODO
+        return true;
     }
 }
