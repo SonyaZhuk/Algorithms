@@ -6,6 +6,11 @@ import java.util.ArrayList;
 
 public class Solution {
 
+    /**
+     * Builds a max rectangle from list of words.
+     * <p>
+     * See Lakman p. 652
+     */
     public Rectangle maxRectangle(String[] words) {
         WordGroup[] groupList = WordGroup.createWordGroups(words);
         int maxWordLength = groupList.length;
