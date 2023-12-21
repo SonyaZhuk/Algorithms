@@ -740,6 +740,103 @@ public class HardTask {
                 ((double) minHeap.peek() + (double) maxHeap.peek()) / 2 : maxHeap.peek();
     }
 
+    /**
+     * Finds a square for a histogram. O(N^2) time complexity.
+     * <p>
+     * See Lakman p. 632
+     */
+    public int computeHistogramVolume(int[] histogram) {
+        int start = 0;
+        int end = histogram.length - 1;
+
+        int max = findIndexOfMax(histogram, start, end);
+
+        int leftVolume = subgraphVolume(histogram, start, max, true);
+        int rightVolume = subgraphVolume(histogram, max, end, false);
+
+        return leftVolume + rightVolume;
+    }
+
+
+    /* Вычисление объема части гистограммы. Один из максимумов равен start
+       или end (в зависимости от isLeft). Найти второй no высоте столбец,
+       вычислить объем между двумя столбцами, затем объем подгистограммы. */
+    private int subgraphVolume(int[] histogram, int start, int end, boolean isLeft) {
+        if (start >= end) return 0;
+        int sum = 0;
+        if (isLeft) {
+            int max = findIndexOfMax(histogram, start, end - 1);
+            sum += borderedVolume(histogram, max, end);
+            sum += subgraphVolume(histogram, start, max, isLeft);
+        } else {
+            int max = findIndexOfMax(histogram, start + 1, end);
+            sum += borderedVolume(histogram, start, max);
+            sum += subgraphVolume(histogram, max, end, isLeft);
+        }
+
+        return sum;
+    }
+
+    private int findIndexOfMax(int[] histogram, int start, int end) {
+        int indexOfMax = start;
+        for (int i = start + 1; i <= end; i++) {
+            if (histogram[i] > histogram[indexOfMax]) {
+                indexOfMax = i;
+            }
+        }
+        return indexOfMax;
+    }
+
+
+    /* Вычисление объема между start и end. Предполагается,
+       что самый высокий столбец - start, а второй по высоте - еnd. */
+    private int borderedVolume(int[] histogram, int start, int end) {
+        if (start >= end) return 0;
+
+        int min = Math.min(histogram[start], histogram[end]);
+        int sum = 0;
+        for (int i = start + 1; i < end; i++) {
+            sum += min - histogram[i];
+        }
+        return sum;
+    }
+
+    /**
+     * Finds a square for a histogram. O(N) time complexity.
+     * <p>
+     * Перебор всех столбцов и вычисление объема воды над столбцом.
+     * Объем воды над столбцом = высота - min(самый высокий столбец слева, самый высокий столбец справа)
+     * Вычисление левого максимума за один проход, затем повторный проход
+     * для вычисления правого максимума, минимума высот и разности.
+     * <p>
+     * See Lakman p. 636
+     */
+    public int computeHistogramVolumeI(int[] histogram) {
+        /* Получение левого максимума */
+        int[] leftMaxes = new int[histogram.length];
+        int leftMax = histogram[0];
+        for (int i = 0; i < histogram.length; i++) {
+            leftMax = Math.max(leftMax, histogram[i]);
+            leftMaxes[i] = leftMax;
+        }
+
+        int sum = 0;
+
+        /* Получение правого максимума */
+        int rightMax = histogram[histogram.length - 1];
+
+        for (int i = histogram.length - 1; i >= 0; i--) {
+            rightMax = Math.max(rightMax, histogram[i]);
+            int secondTallest = Math.min(rightMax, leftMaxes[i]);
+
+         /* Если слева и справа есть более высокие столбцы, то столбец покрыт водой.
+            Вычислить объем воды и прибавить его к сумме. */
+            if (secondTallest > histogram[i]) {
+                sum += secondTallest - histogram[i];
+            }
+        }
+        return sum;
+    }
     public static void main(String[] args) {
         HardTask task = new HardTask();
         int[] arr = {1, 2, 3, 5};
