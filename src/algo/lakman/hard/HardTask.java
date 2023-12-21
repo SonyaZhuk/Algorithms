@@ -456,6 +456,187 @@ public class HardTask {
         return oneAway;
     }
 
+
+    /**
+     * Finds indexes of smallest sub-array in a big array that contains all small array numbers. Brute force.
+     * O(N^2*M) time complexity, N - bigArray.length, M  - smallArray.length.
+     * <p>
+     * See Lakman p. 618
+     */
+    public int[] shortestSuperSequence(int[] bigArray, int[] smallArray) {
+        int bestStart = -1;
+        int bestEnd = -1;
+        for (int i = 0; i < bigArray.length; i++) {
+            int end = findClosure(bigArray, smallArray, i);
+            if (end == -1) break;
+            if (bestStart == -1 || end - i < bestEnd - bestStart) {
+                bestStart = i;
+                bestEnd = end;
+            }
+        }
+        return new int[]{bestStart, bestEnd};
+    }
+
+
+    /* Поиск замыкания (то есть элемента, завершающего nодмассив со всеми
+       элементами smallArray) для заданного индекса. Значение равно
+       максимуму среди следующих позиций каждого элемента из smallArray. */
+    private int findClosure(int[] bigArray, int[] smallArray, int index) {
+        int max = -1;
+        for (int i = 0; i < smallArray.length; i++) {
+            int next = findNextInstance(bigArray, smallArray[i], index);
+            if (next == -1) {
+                return -1;
+            }
+            max = Math.max(next, max);
+        }
+        return max;
+    }
+
+    /* Поиск следующего вхождения element, начиная с index */
+    private int findNextInstance(int[] array, int element, int index) {
+        for (int i = index; 1 < array.length; i++) {
+            if (array[i] == element) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Finds indexes of smallest sub-array in a big array that contains all small array numbers.
+     * O(N*M) time complexity, N - bigArray.length, M  - smallArray.length. O(N) - memory.
+     * <p>
+     * See Lakman p. 622
+     */
+    public int[] shortestSuperSequenceI(int[] bigArray, int[] smallArray) {
+        int[] closures = getClosures(bigArray, smallArray);
+        return getShortestClosure(closures);
+    }
+
+    private int[] getClosures(int[] big, int[] small) {
+        int[] closure = new int[big.length];
+        for (int i = 0; i < small.length; i++) {
+            sweepForClosure(big, closure, small[i]);
+        }
+        return closure;
+    }
+
+    /* Обратный перебор с обновлением списка замыканий следующим вхождением,
+       если оно находится дальше текущего. */
+    private void sweepForClosure(int[] big, int[] closures, int value) {
+        int next = -1;
+        for (int i = big.length - 1; i >= 0; i--) {
+            if (big[i] == value) {
+                next = i;
+            }
+            if ((next == -1 || closures[i] < next) && (closures[i] != -1)) {
+                closures[i] = next;
+            }
+        }
+    }
+
+
+    /* Получение кратчайшего замыкания. */
+    private int[] getShortestClosure(int[] closures) {
+        int[] shortest = new int[]{0, closures[0]};
+        for (int i = 1; i < closures.length; i++) {
+            if (closures[i] == -1) break;
+
+            int[] range = new int[]{i, closures[i]};
+
+            int lenS = shortest[1] - shortest[0] + 1;
+            int lenR = range[1] - range[0] + 1;
+            if (!(lenS < lenR)) {
+                shortest = range;
+            }
+        }
+        return shortest;
+    }
+
+
+    /**
+     * Finds indexes of smallest sub-array in a big array that contains all small array numbers. Min-heap.
+     * O(N*logM) time complexity, N - bigArray.length, M  - smallArray.length. O(N) - memory.
+     * <p>
+     * See Lakman p. 624
+     */
+    public int[] shortestSuperSequenceII(int[] bigArray, int[] smallArray) {
+        List<Queue<Integer>> locations = getLocationsForElements(bigArray, smallArray);
+        if (locations == null) return null;
+        return getShortestClosure(locations);
+    }
+
+
+    /* Получение списка очередей (связанных списков) с индексами, с которыми
+       каждый элемент из smallArray хранится в bigArray. */
+    private List<Queue<Integer>> getLocationsForElements(int[] big, int[] small) {
+        final List<Queue<Integer>> allLocations = new ArrayList<>();
+        for (int el : small) {
+            final Queue<Integer> locations = getLocations(big, el);
+            if (locations.size() == 0) return null;
+            allLocations.add(locations);
+        }
+        return allLocations;
+    }
+
+
+    /* Получение очереди (связного списка) индексов, под которыми элемент встречается в большом массиве. */
+    private Queue<Integer> getLocations(int[] big, int small) {
+        final Queue<Integer> locations = new LinkedList<>();
+        for (int i = 0; i < big.length; i++) {
+            if (big[i] == small) {
+                locations.add(i);
+            }
+        }
+        return locations;
+    }
+
+    private int[] getShortestClosure(List<Queue<Integer>> lists) {
+
+//        PriorityQueue<HeapNode> minHeap = new PriorityQueue<HeapNode>();
+//        int max = Integer.MIN_VALUE;
+//
+//        /* Вставка минимального элемента из каждого списка. */
+//        for (int i = 0; i < lists.size(); i++) {
+//            int head = lists.get(i).remove();
+//            minHeap.add(new HeapNode(head, i));
+//            max = Math.max(max, head);
+//        }
+//
+//        int min = minHeap.peek().locationWithinList;
+//        int bestRangeMin = min;
+//        int bestRangeMax = max;
+//
+//
+//        while (true) {
+//            /* Удаление минимального узла. */
+//            HeapNode n = minHeap.poll();
+//
+//            Queue<Integer> list = lists.get(n.listid);
+//
+//            /* Сравнение диапазона с лучшим диапазоном. */
+//            min = n.locationWithinList;
+//            if (max - min < bestRangeMax - bestRangeMin) {
+//                bestRangeMax = max;
+//                bestRangeMin = min;
+//            }
+//
+//            /* Если элементов не осталось, то подпоследовательностей не осталось, и выполнение можно прервать. */
+//            if (list.size() == 0) {
+//                break;
+//            }
+//
+//            /* Добавление нового начала списка в кучу. */
+//            n.locationWithinList = list.remove();
+//            minHeap.add(n);
+//            max = Math.max(max, n.locationWithinList);
+//
+//        }
+//        return new int[]{bestRangeMin, bestRangeMax};
+        return new int[]{0, 0};
+    }
+
     /**
      * Finds a missing value from 1...N. O(N) time complexity, O(1) memory.
      * <p>
