@@ -4,8 +4,12 @@ import structures.lists.Queue;
 
 import java.util.NoSuchElementException;
 
-// binary search tree
-public class BST <Key extends Comparable<Key>, Value> {
+/**
+ * Binary search tree.
+ * <p>
+ * Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne.
+ */
+public class BST<Key extends Comparable<Key>, Value> {
     private Node root;             // root of BST
     private class Node {
         private Key key;           // sorted by key
@@ -53,9 +57,9 @@ public class BST <Key extends Comparable<Key>, Value> {
     private Value get(Node x, Key key) {
         if (x == null) return null;
         int cmp = key.compareTo(x.key);
-        if      (cmp < 0) return get(x.left, key);
+        if (cmp < 0) return get(x.left, key);
         else if (cmp > 0) return get(x.right, key);
-        else              return x.val;
+        else return x.val;
     }
 
     /***********************************************************************
@@ -63,7 +67,10 @@ public class BST <Key extends Comparable<Key>, Value> {
      *  If key already exists, update with new value
      ***********************************************************************/
     public void put(Key key, Value val) {
-        if (val == null) { delete(key); return; }
+        if (val == null) {
+            delete(key);
+            return;
+        }
         root = put(root, key, val);
         assert check();
     }
@@ -71,9 +78,9 @@ public class BST <Key extends Comparable<Key>, Value> {
     private Node put(Node x, Key key, Value val) {
         if (x == null) return new Node(key, val, 1);
         int cmp = key.compareTo(x.key);
-        if      (cmp < 0) x.left  = put(x.left,  key, val);
+        if (cmp < 0) x.left = put(x.left, key, val);
         else if (cmp > 0) x.right = put(x.right, key, val);
-        else              x.val   = val;
+        else x.val = val;
         x.N = 1 + size(x.left) + size(x.right);
         return x;
     }
@@ -116,11 +123,11 @@ public class BST <Key extends Comparable<Key>, Value> {
     private Node delete(Node x, Key key) {
         if (x == null) return null;
         int cmp = key.compareTo(x.key);
-        if      (cmp < 0) x.left  = delete(x.left,  key);
+        if (cmp < 0) x.left = delete(x.left, key);
         else if (cmp > 0) x.right = delete(x.right, key);
         else {
             if (x.right == null) return x.left;
-            if (x.left  == null) return x.right;
+            if (x.left == null) return x.right;
             Node t = x;
             x = min(t.right);
             x.right = deleteMin(t.right);
@@ -141,7 +148,7 @@ public class BST <Key extends Comparable<Key>, Value> {
 
     private Node min(Node x) {
         if (x.left == null) return x;
-        else                return min(x.left);
+        else return min(x.left);
     }
 
     public Key max() {
@@ -151,7 +158,7 @@ public class BST <Key extends Comparable<Key>, Value> {
 
     private Node max(Node x) {
         if (x.right == null) return x;
-        else                 return max(x.right);
+        else return max(x.right);
     }
 
     public Key floor(Key key) {
@@ -164,7 +171,7 @@ public class BST <Key extends Comparable<Key>, Value> {
         if (x == null) return null;
         int cmp = key.compareTo(x.key);
         if (cmp == 0) return x;
-        if (cmp <  0) return floor(x.left, key);
+        if (cmp < 0) return floor(x.left, key);
         Node t = floor(x.right, key);
         if (t != null) return t;
         else return x;
@@ -192,7 +199,7 @@ public class BST <Key extends Comparable<Key>, Value> {
      *  Rank and selection
      ***********************************************************************/
     public Key select(int k) {
-        if (k < 0 || k >= size())  return null;
+        if (k < 0 || k >= size()) return null;
         Node x = select(root, k);
         return x.key;
     }
@@ -201,9 +208,9 @@ public class BST <Key extends Comparable<Key>, Value> {
     private Node select(Node x, int k) {
         if (x == null) return null;
         int t = size(x.left);
-        if      (t > k) return select(x.left,  k);
-        else if (t < k) return select(x.right, k-t-1);
-        else            return x;
+        if (t > k) return select(x.left, k);
+        else if (t < k) return select(x.right, k - t - 1);
+        else return x;
     }
 
     public int rank(Key key) {
@@ -214,9 +221,9 @@ public class BST <Key extends Comparable<Key>, Value> {
     private int rank(Key key, Node x) {
         if (x == null) return 0;
         int cmp = key.compareTo(x.key);
-        if      (cmp < 0) return rank(key, x.left);
+        if (cmp < 0) return rank(key, x.left);
         else if (cmp > 0) return 1 + size(x.left) + rank(key, x.right);
-        else              return size(x.left);
+        else return size(x.left);
     }
 
     /***********************************************************************
@@ -244,7 +251,7 @@ public class BST <Key extends Comparable<Key>, Value> {
     public int size(Key lo, Key hi) {
         if (lo.compareTo(hi) > 0) return 0;
         if (contains(hi)) return rank(hi) - rank(lo) + 1;
-        else              return rank(hi) - rank(lo);
+        else return rank(hi) - rank(lo);
     }
 
 
@@ -275,7 +282,7 @@ public class BST <Key extends Comparable<Key>, Value> {
      *  Check integrity of BST data structure
      *************************************************************************/
     private boolean check() {
-        if (!isBST())            System.out.println("Not in symmetric order");
+        if (!isBST()) System.out.println("Not in symmetric order");
         if (!isSizeConsistent()) System.out.println("Subtree counts not consistent");
         if (!isRankConsistent()) System.out.println("Ranks not consistent");
         return isBST() && isSizeConsistent() && isRankConsistent();

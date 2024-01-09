@@ -1,7 +1,12 @@
 package structures.trees;
 
+/**
+ * Red-Black tree.
+ * <p>
+ * Algorithhms 4th Edition by Robert Sedgewick, Kevin Wayne.
+ */
 public class RedBlackTree<T extends Comparable<T>> {
-    private static final boolean RED   = true;
+    private static final boolean RED = true;
     private static final boolean BLACK = false;
 
     private Node root;     // root of the BST
@@ -70,8 +75,8 @@ public class RedBlackTree<T extends Comparable<T>> {
     private void flipColors(Node h) {
         // h must have opposite color of its two children
         assert (h != null) && (h.left != null) && (h.right != null);
-        assert (!isRed(h) &&  isRed(h.left) &&  isRed(h.right))
-                || (isRed(h)  && !isRed(h.left) && !isRed(h.right));
+        assert (!isRed(h) && isRed(h.left) && isRed(h.right))
+                || (isRed(h) && !isRed(h.left) && !isRed(h.right));
         h.color = !h.color;
         h.left.color = !h.left.color;
         h.right.color = !h.right.color;
@@ -86,7 +91,7 @@ public class RedBlackTree<T extends Comparable<T>> {
     public void put(T value) {
         root = put(root, value);
         root.color = BLACK;
-       // assert check();
+        // assert check();
     }
 
     // insert the key-value pair in the subtree rooted at current
@@ -94,14 +99,14 @@ public class RedBlackTree<T extends Comparable<T>> {
         if (current == null) return new Node(value, RED, 1);
 
         int cmp = value.compareTo(current.value);
-        if      (cmp < 0) current.left  = put(current.left, value);
+        if (cmp < 0) current.left = put(current.left, value);
         else if (cmp > 0) current.right = put(current.right, value);
-        else              current.value   = value;
+        else current.value = value;
 
         // fix-up any right-leaning links
-        if (isRed(current.right) && !isRed(current.left))      current = rotateLeft(current);
-        if (isRed(current.left)  &&  isRed(current.left.left)) current = rotateRight(current);
-        if (isRed(current.left)  &&  isRed(current.right))     flipColors(current);
+        if (isRed(current.right) && !isRed(current.left)) current = rotateLeft(current);
+        if (isRed(current.left) && isRed(current.left.left)) current = rotateRight(current);
+        if (isRed(current.left) && isRed(current.right)) flipColors(current);
         current.N = size(current.left) + size(current.right) + 1;
 
         return current;
@@ -123,13 +128,13 @@ public class RedBlackTree<T extends Comparable<T>> {
      *****************************************************************************/
     public static void main(String[] args) {
         RedBlackTree<Integer> st = new RedBlackTree();
-        st.put( 8);
-        st.put( 4);
-        st.put( 12);
-        st.put( 5);
-        st.put( 11);
-        st.put( 9);
-        st.put( 10);
+        st.put(8);
+        st.put(4);
+        st.put(12);
+        st.put(5);
+        st.put(11);
+        st.put(9);
+        st.put(10);
         st.put(3);
         st.put(0);
         st.put(7);

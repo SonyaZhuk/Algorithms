@@ -1,13 +1,12 @@
 package structures.trees;
 
 import java.util.LinkedList;
-import java.util.PriorityQueue;
 import java.util.Queue;
 
 /**
- * Java program to implement a binary tree.
+ * Binary tree implementation.
  * <p>
- * based on  //https://www.baeldung.com/java-binary-tree
+ * {@link <a href="https://www.baeldung.com/java-binary-tree">Binary tree implementation</a>}.
  */
 public class BinaryTree<T extends Comparable<T>> {
     private Node root;
@@ -103,9 +102,8 @@ public class BinaryTree<T extends Comparable<T>> {
         }
 
         int cmp = value.compareTo(current.value);
-        if (cmp == 0) {
-            return true;
-        }
+        if (cmp == 0) return true;
+
         return cmp < 0
                 ? containsNodeRecursive(current.left, value)
                 : containsNodeRecursive(current.right, value);
@@ -147,10 +145,9 @@ public class BinaryTree<T extends Comparable<T>> {
     }
 
     /**
-     * Unit tests the <tt>lists.Queue</tt> data type.
+     * Unit tests the <tt>Binary Tree</tt> data type.
      */
     public static void main(String[] args) {
-
         BinaryTree<Integer> bt = new BinaryTree();
         bt.add(6);
         bt.add(4);
@@ -159,23 +156,7 @@ public class BinaryTree<T extends Comparable<T>> {
         bt.add(5);
         bt.add(7);
         bt.add(9);
-
-        System.out.println();
         System.out.println(bt.minValue(bt.root));
-        //System.out.println(bt.containsNode(2));
         bt.traverseInOrder(bt.root);
-        System.out.println();
-        // bt.delete(6);
-        //  bt.traverseInOrder(bt.root);
-        // System.out.println();
-        //bt.traverseLevelOrder();
-
-        PriorityQueue<Integer> queue = new PriorityQueue();
-        queue.add(5);
-        queue.add(7);
-        queue.add(1);
-        queue.add(3);
-        for (Integer s : queue)
-            System.out.println(s);
     }
 }
